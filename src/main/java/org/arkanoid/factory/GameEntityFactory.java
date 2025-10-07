@@ -21,6 +21,7 @@ public class GameEntityFactory implements EntityFactory {
     @Spawns("paddle")
     public Entity newPaddle(SpawnData data) {
         return entityBuilder(data)
+                .type(EntityType.PADDLE)
                 .viewWithBBox(new Rectangle(getPaddleWidth(), getPaddleHeight()))
                 .collidable()
                 .build();
