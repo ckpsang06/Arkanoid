@@ -23,8 +23,7 @@ import org.arkanoid.factory.GameEntityFactory;
 import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
 import static com.almasb.fxgl.dsl.FXGL.spawn;
 import static com.almasb.fxgl.dsl.FXGLForKtKt.*;
-import static org.arkanoid.entity.Ball.BALL_SIZE;
-import static org.arkanoid.entity.Ball.BALL_SPEED;
+import static org.arkanoid.entity.Ball.*;
 import static org.arkanoid.entity.Brick.getBrickSize;
 import static org.arkanoid.entity.Paddle.getPaddleSpeed;
 
@@ -37,20 +36,25 @@ public class GameManager extends GameApplication {
 //    private static final int BALL_SPEED = 5;
 
     private Entity paddle;
+    int movetype = 0;
     private Entity ball;
     private GameEntityFactory entityFactory = new GameEntityFactory();
 
     @Override
     protected void initInput() {
-        FXGL.onKey(KeyCode.RIGHT, () -> {
+        FXGL.onKey(KeyCode.D, () -> {
             paddle.translateX(getPaddleSpeed());
+            movetype = 1;
             FXGL.inc("pixelsMoved", +getPaddleSpeed());
         });
 
-        FXGL.onKey(KeyCode.LEFT, () -> {
+        FXGL.onKey(KeyCode.A, () -> {
             paddle.translateX(-getPaddleSpeed());
+            movetype = 2;
             FXGL.inc("pixelsMoved", -getPaddleSpeed());
         });
+
+
     }
 
     @Override
@@ -87,10 +91,18 @@ public class GameManager extends GameApplication {
         });
 
         onCollisionBegin(EntityType.BALL, EntityType.PADDLE, (ball, paddle) -> {
-            Point2D velocity = ball.getObject("velocity");
+            Point2D velocity1 = ball.getObject("velocity");
+
 
             // Reverse Y direction for horizontal paddle bounce
-            Point2D newVelocity = new Point2D(velocity.getX(), -Math.abs(velocity.getY()));
+            Point2D newVelocity;
+            if (movetype == 1) {
+                newVelocity = new Point2D(getBallSpeed(), -velocity1.getY());
+            } else if (movetype == 2) {
+                newVelocity = new Point2D(-getBallSpeed(), -velocity1.getY());
+            } else {
+                newVelocity = new Point2D(0, -getBallSpeed() * 1.41);
+            }
             ball.setProperty("velocity", newVelocity);
             return null;
         });
@@ -102,6 +114,7 @@ public class GameManager extends GameApplication {
         vars.put("score", 0);
     }
 
+    @Override
     protected void initUI() {
         Text textPixels = new Text();
         textPixels.setTranslateX(20); // x = 50
@@ -154,12 +167,6 @@ public class GameManager extends GameApplication {
         Point2D velocity = ball.getObject("velocity");
         ball.translate(velocity);
 
-        if (ball.getBottomY() == paddle.getY()
-                && ball.getX() < paddle.getRightX()
-                && ball.getRightX() > paddle.getX()) {
-            ball.setProperty("velocity", new Point2D(velocity.getX(), -velocity.getY()));
-        }
-
         if (ball.getX() <= 0) {
             ball.setX(0);
             ball.setProperty("velocity", new Point2D(-velocity.getX(), velocity.getY()));
@@ -185,6 +192,11 @@ public class GameManager extends GameApplication {
         ball.setPosition((double) getAppWidth() / 2 - (double) BALL_SIZE / 2, (double) getAppHeight() / 2 - (double) BALL_SIZE / 2);
         ball.setProperty("velocity", new Point2D(BALL_SPEED, BALL_SPEED));
     }
+
+
+
+
+
 
     public static void main(String[] args) {
         launch(args);
