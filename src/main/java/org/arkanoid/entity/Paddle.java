@@ -22,12 +22,4 @@ public class Paddle extends MovableObject {
         return currentPowerUp;
     }
 
-    public void moveLeft() {
-
-    }
-
-    public void moveRight() {
-
-    }
-
 }
