@@ -26,45 +26,54 @@ import static com.almasb.fxgl.dsl.FXGLForKtKt.*;
 import static org.arkanoid.entity.Ball.*;
 import static org.arkanoid.entity.Brick.getBrickSize;
 import static org.arkanoid.entity.Paddle.getPaddleSpeed;
+import static org.arkanoid.entity.Paddle.getPaddleWidth;
 
 
 public class GameManager extends GameApplication {
-//    private static final int PADDLE_WIDTH = 30;
-//    private static final int PADDLE_HEIGHT = 100;
-//    private static final int BALL_SIZE = 20;
-//    private static final int PADDLE_SPEED = 5;
-//    private static final int BALL_SPEED = 5;
-
     private Entity paddle;
     int movetype = 0;
     private Entity ball;
-    private GameEntityFactory entityFactory = new GameEntityFactory();
+    private final GameEntityFactory entityFactory = new GameEntityFactory();
 
+    /**
+     * Manage all commands executed via inputs - keyboards in this case.
+     * */
     @Override
     protected void initInput() {
+        // IF D KEY IS PRESSED.
         FXGL.onKey(KeyCode.D, () -> {
-            paddle.translateX(getPaddleSpeed());
-            movetype = 1;
-            FXGL.inc("pixelsMoved", +getPaddleSpeed());
+            if (paddle.getRightX() < getAppWidth()) {
+                paddle.translateX(getPaddleSpeed());
+                movetype = 1;
+                FXGL.inc("pixelsMoved", +getPaddleSpeed());
+            }
         });
 
+        // IF A KEY IS PRESSED.
         FXGL.onKey(KeyCode.A, () -> {
-            paddle.translateX(-getPaddleSpeed());
-            movetype = 2;
-            FXGL.inc("pixelsMoved", -getPaddleSpeed());
+            if (paddle.getX() > 0) {
+                paddle.translateX(-getPaddleSpeed());
+                movetype = 2;
+                FXGL.inc("pixelsMoved", -getPaddleSpeed());
+            }
         });
-
-
     }
 
+    /**
+     * Manage the app's initial settings.
+     * */
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setWidth(800);
         settings.setHeight(600);
         settings.setTitle("Arkanoid");
         settings.setVersion("0.1");
+//        settings.setGameMenuEnabled(true);
     }
 
+    /**
+     * Manage the game's initial settings.
+     * */
     @Override
     protected void initGame() {
         getGameWorld().addEntityFactory(new GameEntityFactory());
@@ -76,9 +85,14 @@ public class GameManager extends GameApplication {
         }
     }
 
+    /**
+     * Manage the physics between entities in the games.
+     * */
     @Override
     protected void initPhysics() {
         onCollisionBegin(EntityType.BALL, EntityType.BRICK, (ball, brick) -> {
+            FXGL.inc("score", 1);
+            FXGL.play("land.wav");
             brick.removeFromWorld();
             Point2D velocity = ball.getObject("velocity");
 
@@ -108,60 +122,51 @@ public class GameManager extends GameApplication {
         });
     }
 
+    /**
+     * Manage the game's global variables.
+     *
+     * @param vars The game's list of variables.
+     * */
     @Override
     protected void initGameVars(Map<String, Object> vars) {
         vars.put("pixelsMoved", 0);
         vars.put("score", 0);
     }
 
+    /**
+     * Manage the game's UI code.
+     * */
     @Override
     protected void initUI() {
         Text textPixels = new Text();
-        textPixels.setTranslateX(20); // x = 50
-        textPixels.setTranslateY(10); // y = 100
+        textPixels.setTranslateX(10); // x = 10
+        textPixels.setTranslateY(10); // y = 10
 
 //        Text textScore = getUIFactoryService().newText("", Color.BLACK, 22);
         Text textScore = new Text();
-        textScore.setTranslateX(100);
-        textScore.setTranslateY(100);
-
+        textScore.setTranslateX(10);
+        textScore.setTranslateY(20);
 
         textPixels.textProperty().bind(getWorldProperties().intProperty("pixelsMoved").asString());
         textScore.textProperty().bind(getWorldProperties().intProperty("score").asString());
 
         getGameScene().addUINode(textPixels); // add to the scene graph
+        getGameScene().addUINode(textScore);
+
+        // IMAGEs
+        var computery = FXGL.getAssetLoader().loadTexture("computery.png");
+//        var brick = FXGL.getAssetLoader().loadTexture("brick.png");
+        computery.setTranslateX(getAppWidth() / 2 - 100);
+        computery.setTranslateY(20);
+//        brick.setTranslateX(getAppWidth() - 100);
+//        brick.setTranslateY(100);
+        getGameScene().addUINode(computery);
+//        getGameScene().addUINode(brick);
     }
 
-//    @Override
-//    protected void onUpdate(double tpf) {
-//        Point2D velocity = ball.getObject("velocity");
-//        ball.translate(velocity);
-//
-//        if (ball.getBottomY() == paddle.getY()
-//                && ball.getX() > paddle.getRightX()
-//                && ball.getRightX() < paddle.getX()) {
-//            ball.setProperty("velocity", new Point2D(velocity.getX(), -velocity.getY()));
-//        }
-//
-//        if (ball.getY() <= 0) {
-//            resetBall();
-//        }
-//
-//        if (ball.getY() >= getAppHeight()) {
-//            resetBall();
-//        }
-//
-//        if (ball.getX() <= 0) {
-//            ball.setX(0);
-//            ball.setProperty("velocity", new Point2D(-velocity.getX(), velocity.getY()));
-//        }
-//
-//        if (ball.getRightX() >= getAppWidth()) {
-//            ball.setX(getAppWidth() - BALL_SIZE);
-//            ball.setProperty("velocity", new Point2D(-velocity.getX(), velocity.getY()));
-//        }
-//    }
-
+    /**
+     * Manage what happens in the game every tpf.
+     * */
     @Override
     protected void onUpdate(double tpf) {
         Point2D velocity = ball.getObject("velocity");
@@ -188,16 +193,17 @@ public class GameManager extends GameApplication {
         }
     }
 
+    /**
+     * Reset ball's position to a fixed point.
+     * */
     private void resetBall() {
         ball.setPosition((double) getAppWidth() / 2 - (double) BALL_SIZE / 2, (double) getAppHeight() / 2 - (double) BALL_SIZE / 2);
         ball.setProperty("velocity", new Point2D(BALL_SPEED, BALL_SPEED));
     }
 
-
-
-
-
-
+    /**
+     * Game launch.
+     * */
     public static void main(String[] args) {
         launch(args);
     }
