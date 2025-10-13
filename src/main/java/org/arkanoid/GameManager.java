@@ -11,6 +11,8 @@ import com.almasb.fxgl.input.Input;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
 import javafx.geometry.Point2D;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -18,6 +20,7 @@ import javafx.scene.text.Text;
 import java.util.Map;
 
 import org.arkanoid.entity.*;
+import org.arkanoid.factory.GameBackgroundFactory;
 import org.arkanoid.factory.GameEntityFactory;
 
 import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
@@ -33,7 +36,7 @@ public class GameManager extends GameApplication {
     private Entity paddle;
     int movetype = 0;
     private Entity ball;
-    private final GameEntityFactory entityFactory = new GameEntityFactory();
+//    private final GameEntityFactory entityFactory = new GameEntityFactory();
 
     /**
      * Manage all commands executed via inputs - keyboards in this case.
@@ -77,11 +80,25 @@ public class GameManager extends GameApplication {
     @Override
     protected void initGame() {
         getGameWorld().addEntityFactory(new GameEntityFactory());
+        getGameWorld().addEntityFactory(new GameBackgroundFactory());
+        // BACKGROUND IMAGE - this doesn't work because of addUINode which will cover the entire screen.
+        //  This remains to display how to achieve the above if needed. Deprecated for now.
+
+//        Image grassBackground = image("grass_background.png");
+//        ImageView grassBackgroundView = new ImageView(grassBackground);
+//        grassBackgroundView.setFitHeight(getAppHeight());
+//        grassBackgroundView.setFitWidth(getAppWidth());
+//        getGameScene().addUINode(grassBackgroundView);
+
+        spawn("grassBackground", 0, 0);
+
         paddle = spawn("paddle", 400, 500);
-        ball = spawn("ball", getAppWidth() / 2, getAppHeight() / 2);
-        for (int i = 0; i < 10; i++) {
-            spawn("brick", getAppWidth() / 2 - 200 - getBrickSize(), 100 + i*(getBrickSize() + 20));
-            spawn("brick", getAppWidth() / 2 + 200, 100 + i*(getBrickSize() + 20));
+        ball = spawn("ball", (double) getAppWidth() / 2, (double) getAppHeight() / 2);
+        for (int i = 0; i < 15; i++) {
+//            spawn("brick", (double) getAppWidth() / 2 - 200 - getBrickSize(), 100 + i*(getBrickSize() + 20));
+//            spawn("brick", (double) getAppWidth() / 2 + 200, 100 + i*(getBrickSize() + 20));
+            spawn("brick", 20 + i * (getBrickSize() + 30), 250);
+            spawn("brick", 20 + i * (getBrickSize() + 30), 350);
         }
     }
 
@@ -153,15 +170,11 @@ public class GameManager extends GameApplication {
         getGameScene().addUINode(textPixels); // add to the scene graph
         getGameScene().addUINode(textScore);
 
-        // IMAGEs
+        // UI IMAGEs
         var computery = FXGL.getAssetLoader().loadTexture("computery.png");
-//        var brick = FXGL.getAssetLoader().loadTexture("brick.png");
-        computery.setTranslateX(getAppWidth() / 2 - 100);
+        computery.setTranslateX((double) getAppWidth() / 2 - 100);
         computery.setTranslateY(20);
-//        brick.setTranslateX(getAppWidth() - 100);
-//        brick.setTranslateY(100);
         getGameScene().addUINode(computery);
-//        getGameScene().addUINode(brick);
     }
 
     /**
