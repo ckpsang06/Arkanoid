@@ -30,6 +30,7 @@ import static org.arkanoid.entity.Ball.*;
 import static org.arkanoid.entity.Brick.getBrickSize;
 import static org.arkanoid.entity.Paddle.getPaddleSpeed;
 import static org.arkanoid.entity.Paddle.getPaddleWidth;
+import javafx.application.Platform;
 
 
 public class GameManager extends GameApplication {
@@ -60,6 +61,7 @@ public class GameManager extends GameApplication {
                 FXGL.inc("pixelsMoved", -getPaddleSpeed());
             }
         });
+
     }
 
     /**
@@ -70,8 +72,8 @@ public class GameManager extends GameApplication {
         settings.setWidth(800);
         settings.setHeight(600);
         settings.setTitle("Arkanoid");
-        settings.setVersion("0.1");
-//        settings.setGameMenuEnabled(true);
+        settings.setVersion("0.1");settings.setGameMenuEnabled(true);
+        settings.setMainMenuEnabled(true);
     }
 
     /**
@@ -148,6 +150,7 @@ public class GameManager extends GameApplication {
     protected void initGameVars(Map<String, Object> vars) {
         vars.put("pixelsMoved", 0);
         vars.put("score", 0);
+        vars.put("currentHp", 3);   // <-- thêm dòng này (số HP ban đầu)
     }
 
     /**
@@ -175,6 +178,13 @@ public class GameManager extends GameApplication {
         computery.setTranslateX((double) getAppWidth() / 2 - 100);
         computery.setTranslateY(20);
         getGameScene().addUINode(computery);
+
+        // UI TEXT.
+        Text textHp = new Text();
+        textHp.setTranslateX(10);
+        textHp.setTranslateY(40);
+        textHp.textProperty().bind(getWorldProperties().intProperty("currentHp").asString());
+        getGameScene().addUINode(textHp);
     }
 
     /**
@@ -182,27 +192,53 @@ public class GameManager extends GameApplication {
      * */
     @Override
     protected void onUpdate(double tpf) {
-        Point2D velocity = ball.getObject("velocity");
-        ball.translate(velocity);
+        try {
+            Point2D velocity = ball.getObject("velocity");
+            ball.translate(velocity);
 
-        if (ball.getX() <= 0) {
-            ball.setX(0);
-            ball.setProperty("velocity", new Point2D(-velocity.getX(), velocity.getY()));
-        }
+            if (velocity == null) {
+                velocity = new Point2D(BALL_SPEED, BALL_SPEED);
+                ball.setProperty("velocity", velocity);
+            }
 
-        if (ball.getRightX() >= getAppWidth()) {
-            ball.setX(getAppWidth() - BALL_SIZE);
-            ball.setProperty("velocity", new Point2D(-velocity.getX(), velocity.getY()));
-        }
+            if (ball.getX() <= 0) {
+                ball.setX(0);
+                ball.setProperty("velocity", new Point2D(-velocity.getX(), velocity.getY()));
+            }
 
-        if (ball.getY() <= 0) {
-            ball.setY(0);
-            ball.setProperty("velocity", new Point2D(velocity.getX(), -velocity.getY()));
-        }
+            if (ball.getRightX() >= getAppWidth()) {
+                ball.setX(getAppWidth() - BALL_SIZE);
+                ball.setProperty("velocity", new Point2D(-velocity.getX(), velocity.getY()));
+            }
 
-        if (ball.getBottomY() >= getAppHeight()) {
-            ball.setY(getAppHeight() - BALL_SIZE);
-            ball.setProperty("velocity", new Point2D(velocity.getX(), -velocity.getY()));
+            if (ball.getY() <= 0) {
+                ball.setY(0);
+                ball.setProperty("velocity", new Point2D(velocity.getX(), -velocity.getY()));
+            }
+
+            if (ball.getBottomY() > getAppHeight()) {
+                // take and reduce hp.
+                var hpProp = getWorldProperties().intProperty("currentHp");
+                int currentHp = Math.max(0, hpProp.get() - 1);
+                hpProp.set(currentHp);
+
+                System.out.println("Ball out! Hp còn : " + currentHp);
+                if (currentHp <= 0) {
+                    onGameOver();
+                } else {
+                    resetBall();
+                }
+                return;
+            }
+        } catch (ClassCastException cce) {
+            System.err.println("ClassCastException trong onUpdate: " + cce.getMessage());
+            cce.printStackTrace();
+        } catch (NullPointerException npe) {
+            System.err.println("NullPointerException trong onUpdate: " + npe.getMessage());
+            npe.printStackTrace();
+        } catch (Exception ex) {
+            System.err.println("Exception bất ngờ trong onUpdate: " + ex);
+            ex.printStackTrace();
         }
     }
 
@@ -210,8 +246,17 @@ public class GameManager extends GameApplication {
      * Reset ball's position to a fixed point.
      * */
     private void resetBall() {
+        if (paddle == null || ball == null) {
+            System.err.println("resetBallAbovePaddle: paddle hoặc ball = null");
+            return;
+        }
         ball.setPosition((double) getAppWidth() / 2 - (double) BALL_SIZE / 2, (double) getAppHeight() / 2 - (double) BALL_SIZE / 2);
         ball.setProperty("velocity", new Point2D(BALL_SPEED, BALL_SPEED));
+    }
+
+    private void onGameOver() {
+        System.out.println("Game Over!");
+        return;
     }
 
     /**
