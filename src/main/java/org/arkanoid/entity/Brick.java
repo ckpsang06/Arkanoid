@@ -1,7 +1,7 @@
 package org.arkanoid.entity;
 
 public class Brick extends GameObject {
-    private static int BRICK_SIZE = 30;
+    private static int BRICK_SIZE = 20;
     private int hitPoints;
     private String type;
 
