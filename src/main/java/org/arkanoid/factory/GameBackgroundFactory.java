@@ -5,6 +5,8 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.entity.SpawnData;
 import static com.almasb.fxgl.dsl.FXGL.entityBuilder;
+import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
+import static com.almasb.fxgl.dsl.FXGLForKtKt.getAppHeight;
 import static com.almasb.fxgl.dsl.FXGLForKtKt.image;
 import static org.arkanoid.BackgroundType.GRASS;
 import static org.arkanoid.entity.Ball.*;
@@ -28,9 +30,14 @@ import java.awt.*;
 public class GameBackgroundFactory implements EntityFactory {
     @Spawns("grassBackground")
     public Entity newGrassBackground(SpawnData data) {
+        Image grassImage = image("grass_background.png");
+        ImageView grassView = new ImageView(grassImage);
+
+        grassView.setFitWidth(getAppWidth());
+        grassView.setFitHeight(getAppHeight());
         return entityBuilder(data)
                 .type(GRASS)
-                .view(new ImageView(image("grass_background.png")))
+                .view(grassView)
                 .opacity(0.4)
                 .build();
     }

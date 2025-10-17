@@ -69,10 +69,11 @@ public class GameManager extends GameApplication {
      * */
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setWidth(800);
-        settings.setHeight(600);
+        settings.setWidth(1280);
+        settings.setHeight(720);
         settings.setTitle("Arkanoid");
-        settings.setVersion("0.1");settings.setGameMenuEnabled(true);
+        settings.setVersion("0.1");
+        settings.setGameMenuEnabled(true);
         settings.setMainMenuEnabled(true);
     }
 
@@ -99,8 +100,8 @@ public class GameManager extends GameApplication {
         for (int i = 0; i < 15; i++) {
 //            spawn("brick", (double) getAppWidth() / 2 - 200 - getBrickSize(), 100 + i*(getBrickSize() + 20));
 //            spawn("brick", (double) getAppWidth() / 2 + 200, 100 + i*(getBrickSize() + 20));
-            spawn("brick", 20 + i * (getBrickSize() + 30), 250);
-            spawn("brick", 20 + i * (getBrickSize() + 30), 350);
+            spawn("brick", 20 + i * getAppWidth() / 15, 250);
+            spawn("brick", 20 + i * getAppWidth() / 15, 350);
         }
     }
 
