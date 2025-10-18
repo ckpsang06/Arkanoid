@@ -30,13 +30,28 @@ import static org.arkanoid.entity.Ball.*;
 import static org.arkanoid.entity.Brick.getBrickSize;
 import static org.arkanoid.entity.Paddle.getPaddleSpeed;
 import static org.arkanoid.entity.Paddle.getPaddleWidth;
+<<<<<<< Updated upstream
 
+=======
+import javafx.application.Platform;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.control.Button;
+import javafx.geometry.Pos;
+>>>>>>> Stashed changes
 
 public class GameManager extends GameApplication {
     private Entity paddle;
     int movetype = 0;
     private Entity ball;
 //    private final GameEntityFactory entityFactory = new GameEntityFactory();
+
+// UI fields
+    private HBox hpBox;
+    private StackPane gameOverOverlay;
+    private boolean gameOverVisible = false;
+    private boolean isPaused = false;
 
     /**
      * Manage all commands executed via inputs - keyboards in this case.
@@ -254,6 +269,90 @@ protected void initGameVars(Map<String, Object> vars) {
 
     private void onGameOver() {
         System.out.println("Game Over!");
+<<<<<<< Updated upstream
+=======
+        showGameOver();
+    }
+
+    private void showGameOver() {
+        if (gameOverVisible) return;
+        gameOverVisible = true;
+
+        Rectangle dim = new Rectangle(getAppWidth(), getAppHeight());
+        dim.setFill(javafx.scene.paint.Color.color(0, 0, 0, 0.6));
+
+        VBox vbox = new VBox(12);
+        vbox.setPrefWidth(320);
+        vbox.setPrefHeight(220);
+        vbox.setStyle("-fx-alignment: center; -fx-padding: 20;");
+
+        // Ảnh gameover (texture)
+        var goImg = FXGL.getAssetLoader().loadTexture("gameover.png");
+        goImg.setFitWidth(300);
+        goImg.setFitHeight(100);
+
+        Text finalScore = new Text("Score: " + getWorldProperties().intProperty("score").get());
+        finalScore.setStyle("-fx-font-size: 20px; -fx-fill: white;");
+
+        Button btnRestart = new Button("Restart");
+        btnRestart.setPrefWidth(120);
+        btnRestart.setFocusTraversable(false);
+        btnRestart.setOnAction(e -> {
+            hideGameOver();
+            FXGL.getGameController().startNewGame();
+        });
+
+        Button btnMainMenu = new Button("Main Menu");
+        btnMainMenu.setPrefWidth(120);
+        btnMainMenu.setFocusTraversable(false);
+        btnMainMenu.setOnAction(e -> {
+            hideGameOver();
+            FXGL.getGameController().gotoMainMenu();
+        });
+
+        HBox btns = new HBox(10, btnRestart, btnMainMenu);
+        btns.setStyle("-fx-alignment: center;");
+
+        vbox.getChildren().addAll(goImg, finalScore, btns);
+
+        gameOverOverlay = new StackPane(dim, vbox);
+        StackPane.setAlignment(vbox, Pos.CENTER);
+
+        getGameScene().addUINode(gameOverOverlay);
+
+        //Dừng cập nhật game mà vẫn giữ UI hoạt động
+        FXGL.getGameController().pauseEngine();
+        FXGL.getInput().setProcessInput(false);
+
+        isPaused = true;
+    }
+
+    private void hideGameOver() {
+        if (!gameOverVisible) return;
+        gameOverVisible = false;
+
+        if (gameOverOverlay != null) {
+            getGameScene().removeUINode(gameOverOverlay);
+            gameOverOverlay = null;
+        }
+
+        // Tiếp tục game
+        FXGL.getGameController().resumeEngine();
+        FXGL.getInput().setProcessInput(true);
+
+        isPaused = false;
+
+        // Trả focus lại cho scene để ăn phím
+        Platform.runLater(() -> {
+            try {
+                getGameScene().getRoot().requestFocus();
+            } catch (Exception ex) {
+                try {
+                    FXGL.getPrimaryStage().getScene().getRoot().requestFocus();
+                } catch (Exception ignored) {}
+            }
+        });
+>>>>>>> Stashed changes
     }
 
     /**
