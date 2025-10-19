@@ -8,6 +8,8 @@ import static com.almasb.fxgl.dsl.FXGLForKtKt.image;
 import static org.arkanoid.entity.Ball.*;
 import static org.arkanoid.entity.Paddle.*;
 import static org.arkanoid.entity.Brick.*;
+import static org.arkanoid.entity.PowerUpPickup.*;
+
 
 import com.almasb.fxgl.entity.Spawns;
 import com.almasb.fxgl.entity.components.CollidableComponent;
@@ -18,6 +20,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import org.arkanoid.entity.EntityType;
+import org.arkanoid.component.HPComponent;
 
 import java.awt.*;
 
@@ -28,6 +31,7 @@ public class GameEntityFactory implements EntityFactory {
         return entityBuilder(data)
                 .type(EntityType.PADDLE)
                 .viewWithBBox(new Rectangle(getPaddleWidth(), getPaddleHeight()))
+                .with("moveType", Integer.valueOf(0))
                 .collidable()
                 .build();
     }
@@ -53,6 +57,22 @@ public class GameEntityFactory implements EntityFactory {
         return entityBuilder(data)
                 .type(EntityType.BRICK)
                 .viewWithBBox(brickView)
+                .collidable()
+                .with(new HPComponent(3))
+                .build();
+    }
+
+    @Spawns("heal_item")
+    public Entity newHealItem(SpawnData data) {
+        Image healItemImage = image("heal_item.png");
+        ImageView healItemView = new ImageView(healItemImage);
+
+        healItemView.setFitWidth(getPowerUpSize());
+        healItemView.setFitHeight(getPowerUpSize());
+
+        return entityBuilder(data)
+                .type(EntityType.HEAL_ITEM)
+                .viewWithBBox(healItemView)
                 .collidable()
                 .build();
     }
