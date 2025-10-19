@@ -38,6 +38,10 @@ public class GameManager extends GameApplication {
     private Entity paddle;
     public static int movetype = 0;
     private Entity ball;
+
+    private boolean ballLaunched = false;
+
+
     Random rand = new Random();
 //    private final GameEntityFactory entityFactory = new GameEntityFactory();
 
@@ -72,6 +76,16 @@ public class GameManager extends GameApplication {
         FXGL.onKey(KeyCode.ESCAPE, () -> {
             MusicHandler.pauseMusic();
         });
+
+        FXGL.onKeyDown(KeyCode.SPACE, () -> {
+            if (!ballLaunched) {
+                ball.setProperty("velocity", new Point2D(BALL_SPEED, BALL_SPEED));
+                ballLaunched = true;
+                FXGL.play("launch.wav"); // Optional sound effect
+                System.out.println("Ball launched!");
+            }
+        });
+
     }
 
     /**
@@ -108,11 +122,14 @@ public class GameManager extends GameApplication {
 
         spawn("grassBackground", 0, 0);
 
-        paddle = spawn("paddle", 400, 500);
-        ball = spawn("ball", (double) getAppWidth() / 2, (double) getAppHeight() / 2);
+        paddle = spawn("paddle", 400, 600);
+
+        ball = spawn("ball", getAppWidth() / 2.0, getAppHeight() / 2.0 + 50);
+        ball.setProperty("velocity", Point2D.ZERO); // No movement yet
+
         for (int i = 0; i < 15; i++) {
-            spawn("brick", 20 + i * getAppWidth() / 15, 250);
-            spawn("brick", 20 + i * getAppWidth() / 15, 350);
+            spawn("brick", 20 + i * getAppWidth() / 15, 200);
+            spawn("brick", 20 + i * getAppWidth() / 15, 300);
         }
     }
 
@@ -178,6 +195,10 @@ public class GameManager extends GameApplication {
      * */
     @Override
     protected void onUpdate(double tpf) {
+        if (!ballLaunched) {
+            return; // Skip ball movement until launched
+        }
+
         try {
             Point2D velocity = ball.getObject("velocity");
             ball.translate(velocity);
@@ -236,12 +257,16 @@ public class GameManager extends GameApplication {
      * Reset ball's position to a fixed point.
      * */
     private void resetBall() {
-        if (paddle == null || ball == null) {
-            System.err.println("resetBallAbovePaddle: paddle hoặc ball = null");
-            return;
-        }
-        ball.setPosition((double) getAppWidth() / 2 - (double) BALL_SIZE / 2, (double) getAppHeight() / 2 - (double) BALL_SIZE / 2);
-        ball.setProperty("velocity", new Point2D(BALL_SPEED, BALL_SPEED));
+        ballLaunched = false;
+        ball.setProperty("velocity", Point2D.ZERO);
+        ball.setPosition(getAppWidth() / 2.0 - BALL_SIZE / 2.0, getAppHeight() / 2.0 - BALL_SIZE / 2.0);
+
+//        if (paddle == null || ball == null) {
+//            System.err.println("resetBallAbovePaddle: paddle hoặc ball = null");
+//            return;
+//        }
+//        ball.setPosition((double) getAppWidth() / 2 - (double) BALL_SIZE / 2, (double) getAppHeight() / 2 - (double) BALL_SIZE / 2);
+//        ball.setProperty("velocity", new Point2D(BALL_SPEED, BALL_SPEED));
     }
 
     private void onGameOver() {
