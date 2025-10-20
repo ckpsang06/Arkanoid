@@ -40,7 +40,7 @@ public class GameEntityFactory implements EntityFactory {
     public Entity newBall(SpawnData data) {
         return entityBuilder(data)
                 .type(EntityType.BALL)
-                .viewWithBBox(new Rectangle(BALL_SIZE, BALL_SIZE, Color.BLUE))
+                .viewWithBBox(new Circle(BALL_SIZE/2, Color.BLUE))
                 .collidable()
                 .with("velocity", new Point2D(BALL_SPEED, BALL_SPEED))
                 .build();
@@ -51,7 +51,7 @@ public class GameEntityFactory implements EntityFactory {
         Image brickImage = image("brick.png");
         ImageView brickView = new ImageView(brickImage);
 
-        brickView.setFitWidth(getBrickSize());
+        brickView.setFitWidth(getBrickWidth());
         brickView.setFitHeight(getBrickSize());
 
         return entityBuilder(data)

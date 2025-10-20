@@ -73,9 +73,9 @@ public class GameManager extends GameApplication {
             }
         });
 
-        FXGL.onKey(KeyCode.ESCAPE, () -> {
-            MusicHandler.pauseMusic();
-        });
+//        FXGL.onKey(KeyCode.ESCAPE, () -> {
+//            MusicHandler.pauseMusic();
+//        });
 
         FXGL.onKeyDown(KeyCode.SPACE, () -> {
             if (!ballLaunched) {
@@ -128,8 +128,8 @@ public class GameManager extends GameApplication {
         ball.setProperty("velocity", Point2D.ZERO); // No movement yet
 
         for (int i = 0; i < 15; i++) {
-            spawn("brick", 20 + i * getAppWidth() / 15, 200);
-            spawn("brick", 20 + i * getAppWidth() / 15, 300);
+            spawn("brick", 5 + i * (getAppWidth() / 15 + 5), 200);
+            spawn("brick", 5 + i * (getAppWidth() / 15 + 5), 300);
         }
     }
 
@@ -177,10 +177,10 @@ public class GameManager extends GameApplication {
         getGameScene().addUINode(textScore);
 
         // UI IMAGEs
-        var computery = FXGL.getAssetLoader().loadTexture("computery.png");
-        computery.setTranslateX((double) getAppWidth() / 2 - 100);
-        computery.setTranslateY(20);
-        getGameScene().addUINode(computery);
+//        var computery = FXGL.getAssetLoader().loadTexture("computery.png");
+//        computery.setTranslateX((double) getAppWidth() / 2 - 100);
+//        computery.setTranslateY(20);
+//        getGameScene().addUINode(computery);
 
         // UI TEXT.
         Text textHp = new Text();

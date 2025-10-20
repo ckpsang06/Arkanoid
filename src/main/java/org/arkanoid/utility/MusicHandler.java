@@ -13,6 +13,7 @@ public class MusicHandler {
         ensureLoaded();
         stopAllKnownMusic();
 
+        tutorialTheme.getAudio().setVolume(0.7);
         currentMusic = tutorialTheme;
         FXGL.getAudioPlayer().loopMusic(currentMusic);
         System.out.println("Level Music Played");
@@ -40,7 +41,6 @@ public class MusicHandler {
         if (mainMenuTheme != null)
             FXGL.getAudioPlayer().stopMusic(mainMenuTheme);
         FXGL.getAudioPlayer().stopAllMusic(); // Just in case
-        FXGL.getAudioPlayer().stopAllSoundsAndMusic();
     }
 
     public static void pauseMusic() {

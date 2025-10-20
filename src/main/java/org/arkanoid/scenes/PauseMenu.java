@@ -25,11 +25,11 @@ public class PauseMenu extends FXGLMenu {
         // Toggle music pause/resume
         if (isPausing) {
             System.out.println("Pressed Pause");
-            MusicHandler.resumeMusic();
+//            MusicHandler.resumeMusic();
             isPausing = false;
         } else {
             System.out.println("Pressed Pause");
-            MusicHandler.pauseMusic();
+//            MusicHandler.pauseMusic();
             isPausing = true;
         }
 
