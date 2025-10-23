@@ -15,7 +15,10 @@ public class Paddle extends MovableObject {
     private String currentPowerUp;
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
     private PhysicsComponent physics;
     private float speed = 0;
     private Vec2 velocity = new Vec2();
@@ -65,5 +68,9 @@ public class Paddle extends MovableObject {
     public void moveRight() {
 
     }
+<<<<<<< Updated upstream
+}
+>>>>>>> Stashed changes
+=======
 }
 >>>>>>> Stashed changes

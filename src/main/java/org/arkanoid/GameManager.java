@@ -3,12 +3,16 @@ package org.arkanoid;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 import com.almasb.fxgl.core.math.FXGLMath;
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.dsl.handlers.CollectibleHandler;
 import com.almasb.fxgl.entity.Entity;
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 import com.almasb.fxgl.entity.EntityFactory;
 import com.almasb.fxgl.input.Input;
@@ -18,13 +22,20 @@ import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.HitBox;
 >>>>>>> Stashed changes
+=======
+import com.almasb.fxgl.physics.CollisionHandler;
+import com.almasb.fxgl.physics.HitBox;
+>>>>>>> Stashed changes
 import javafx.geometry.Point2D;
 import javafx.scene.effect.Effect;
 import javafx.scene.effect.MotionBlur;
 import javafx.scene.input.KeyCode;
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 import javafx.scene.text.Text;
@@ -41,7 +52,10 @@ import static org.arkanoid.entity.Paddle.getPaddleSpeed;
 import static org.arkanoid.entity.Paddle.getPaddleWidth;
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
 import javafx.scene.layout.StackPane;
 import org.arkanoid.factory.GameSceneFactory;
 import org.arkanoid.utility.MusicHandler;
@@ -328,6 +342,9 @@ public class GameManager extends GameApplication {
 
     private void onGameOver() {
         GameOverManager.onGameOver();
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     }
 
