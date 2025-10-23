@@ -11,10 +11,6 @@ public class GameSceneFactory extends SceneFactory {
     @NotNull
     @Override
     public FXGLMenu newMainMenu() {
-<<<<<<< Updated upstream
-=======
-//        MusicHandler.playMenuMusic();
->>>>>>> Stashed changes
         return new MainMenu(MenuType.MAIN_MENU);
     }
 }
