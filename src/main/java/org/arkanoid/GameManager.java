@@ -212,20 +212,27 @@ public class GameManager extends GameApplication {
             if (ball.getX() <= 0) {
                 ball.setX(0);
                 ball.setProperty("velocity", new Point2D(-velocity.getX(), velocity.getY()));
+                FXGL.play("wallhit.wav");
+                getGameScene().getViewport().shakeTranslational(4.5);
             }
 
             if (ball.getRightX() >= getAppWidth()) {
                 ball.setX(getAppWidth() - BALL_SIZE);
                 ball.setProperty("velocity", new Point2D(-velocity.getX(), velocity.getY()));
+                FXGL.play("wallhit.wav");
+                getGameScene().getViewport().shakeTranslational(4.5);
             }
 
             if (ball.getY() <= 0) {
                 ball.setY(0);
                 ball.setProperty("velocity", new Point2D(velocity.getX(), -velocity.getY()));
+                FXGL.play("wallhit.wav");
+                getGameScene().getViewport().shakeTranslational(4.5);
             }
 
             // IF BALL FALLS INTO KILL-ZONE
             if (ball.getBottomY() > getAppHeight()) {
+                getGameScene().getViewport().shakeTranslational(9.5);
                 FXGL.play("killzone.wav");
                 // take and reduce hp.
                 var hpProp = getWorldProperties().intProperty("currentHP");
