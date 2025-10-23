@@ -14,8 +14,11 @@ import javafx.geometry.Point2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+<<<<<<< Updated upstream
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+=======
+>>>>>>> Stashed changes
 import javafx.scene.text.Text;
 import java.util.Map;
 
@@ -24,14 +27,15 @@ import org.arkanoid.factory.GameBackgroundFactory;
 import org.arkanoid.factory.GameEntityFactory;
 
 import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
+import static com.almasb.fxgl.dsl.FXGL.getAppHeight;
 import static com.almasb.fxgl.dsl.FXGL.spawn;
-import static com.almasb.fxgl.dsl.FXGLForKtKt.*;
 import static org.arkanoid.entity.Ball.*;
 import static org.arkanoid.entity.Brick.getBrickSize;
 import static org.arkanoid.entity.Paddle.getPaddleSpeed;
 import static org.arkanoid.entity.Paddle.getPaddleWidth;
 <<<<<<< Updated upstream
 
+<<<<<<< Updated upstream
 =======
 import javafx.application.Platform;
 import javafx.scene.layout.HBox;
@@ -40,12 +44,28 @@ import javafx.scene.layout.VBox;
 import javafx.scene.control.Button;
 import javafx.geometry.Pos;
 >>>>>>> Stashed changes
+=======
+import javafx.scene.layout.VBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.control.Button;
+import org.arkanoid.factory.GameSceneFactory;
+import org.arkanoid.utility.MusicHandler;
+import org.arkanoid.utility.PhysicsHandler;
+>>>>>>> Stashed changes
 
 public class GameManager extends GameApplication {
     private Entity paddle;
     int movetype = 0;
     private Entity ball;
+<<<<<<< Updated upstream
 //    private final GameEntityFactory entityFactory = new GameEntityFactory();
+=======
+
+    private boolean ballLaunched = false;
+    private boolean initialSpawnsDone = false;
+
+    Random rand = new Random();
+>>>>>>> Stashed changes
 
 // UI fields
     private HBox hpBox;
@@ -53,13 +73,16 @@ public class GameManager extends GameApplication {
     private boolean gameOverVisible = false;
     private boolean isPaused = false;
 
-    /**
-     * Manage all commands executed via inputs - keyboards in this case.
-     * */
+    // Menu / Level select
+    private StackPane tutorialOverlay = null;
+    private int currentLevel = 0;
+
+    /* ---------------- Input ---------------- */
     @Override
     protected void initInput() {
-        // IF D KEY IS PRESSED.
         FXGL.onKey(KeyCode.D, () -> {
+            if (isPaused) return;
+            if (paddle == null) return;
             if (paddle.getRightX() < getAppWidth()) {
                 paddle.translateX(getPaddleSpeed());
                 movetype = 1;
@@ -67,33 +90,59 @@ public class GameManager extends GameApplication {
             }
         });
 
-        // IF A KEY IS PRESSED.
         FXGL.onKey(KeyCode.A, () -> {
+            if (isPaused) return;
+            if (paddle == null) return;
             if (paddle.getX() > 0) {
                 paddle.translateX(-getPaddleSpeed());
                 movetype = 2;
                 FXGL.inc("pixelsMoved", -getPaddleSpeed());
             }
         });
+<<<<<<< Updated upstream
+=======
+
+        FXGL.onKey(KeyCode.ESCAPE, () -> {
+            MusicHandler.pauseMusic();
+        });
+
+        FXGL.onKeyDown(KeyCode.SPACE, () -> {
+            if (isPaused) return;
+            if (!ballLaunched && ball != null) {
+                ball.setProperty("velocity", new Point2D(BALL_SPEED, BALL_SPEED));
+                ballLaunched = true;
+                FXGL.play("launch.wav");
+                System.out.println("Ball launched!");
+            }
+        });
+>>>>>>> Stashed changes
     }
 
-    /**
-     * Manage the app's initial settings.
-     * */
     @Override
     protected void initSettings(GameSettings settings) {
+<<<<<<< Updated upstream
         settings.setWidth(800);
         settings.setHeight(600);
+=======
+        settings.setSceneFactory(new GameSceneFactory()); // your factory (must return MainMenu)
+        settings.setWidth(1280);
+        settings.setHeight(720);
+>>>>>>> Stashed changes
         settings.setTitle("Arkanoid");
         settings.setVersion("0.1");settings.setGameMenuEnabled(true);
         settings.setMainMenuEnabled(true);
     }
 
-    /**
-     * Manage the game's initial settings.
-     * */
+    @Override
+    protected void initGameVars(Map<String, Object> vars) {
+        vars.put("pixelsMoved", 0);
+        vars.put("score", 0);
+        vars.put("currentHP", 3);
+    }
+
     @Override
     protected void initGame() {
+<<<<<<< Updated upstream
         getGameWorld().addEntityFactory(new GameEntityFactory());
         getGameWorld().addEntityFactory(new GameBackgroundFactory());
         // BACKGROUND IMAGE - this doesn't work because of addUINode which will cover the entire screen.
@@ -104,6 +153,10 @@ public class GameManager extends GameApplication {
 //        grassBackgroundView.setFitHeight(getAppHeight());
 //        grassBackgroundView.setFitWidth(getAppWidth());
 //        getGameScene().addUINode(grassBackgroundView);
+=======
+        FXGL.getGameWorld().addEntityFactory(new GameEntityFactory());
+        FXGL.getGameWorld().addEntityFactory(new GameBackgroundFactory());
+>>>>>>> Stashed changes
 
         spawn("grassBackground", 0, 0);
 
@@ -115,11 +168,17 @@ public class GameManager extends GameApplication {
             spawn("brick", 20 + i * (getBrickSize() + 30), 250);
             spawn("brick", 20 + i * (getBrickSize() + 30), 350);
         }
+
+            // hiển thị level để chọn.
+        showLevelSelect();
     }
 
+<<<<<<< Updated upstream
     /**
      * Manage the physics between entities in the games.
      * */
+=======
+>>>>>>> Stashed changes
     @Override
     protected void initPhysics() {
         onCollisionBegin(EntityType.BALL, EntityType.BRICK, (ball, brick) -> {
@@ -154,6 +213,7 @@ public class GameManager extends GameApplication {
         });
     }
 
+<<<<<<< Updated upstream
     /**
      * Manage the game's global variables.
      *
@@ -169,56 +229,77 @@ protected void initGameVars(Map<String, Object> vars) {
     /**
      * Manage the game's UI code.
      * */
+=======
+>>>>>>> Stashed changes
     @Override
     protected void initUI() {
         Text textPixels = new Text();
-        textPixels.setTranslateX(10); // x = 10
-        textPixels.setTranslateY(10); // y = 10
-
-//        Text textScore = getUIFactoryService().newText("", Color.BLACK, 22);
+        textPixels.setTranslateX(10);
+        textPixels.setTranslateY(10);
         Text textScore = new Text();
         textScore.setTranslateX(10);
-        textScore.setTranslateY(20);
+        textScore.setTranslateY(30);
 
-        textPixels.textProperty().bind(getWorldProperties().intProperty("pixelsMoved").asString());
-        textScore.textProperty().bind(getWorldProperties().intProperty("score").asString());
+        textPixels.textProperty().bind(FXGL.getWorldProperties().intProperty("pixelsMoved").asString());
+        textScore.textProperty().bind(FXGL.getWorldProperties().intProperty("score").asString());
+        FXGL.getGameScene().addUINode(textPixels);
+        FXGL.getGameScene().addUINode(textScore);
 
-        getGameScene().addUINode(textPixels); // add to the scene graph
-        getGameScene().addUINode(textScore);
-
-        // UI IMAGEs
         var computery = FXGL.getAssetLoader().loadTexture("computery.png");
         computery.setTranslateX((double) getAppWidth() / 2 - 100);
         computery.setTranslateY(20);
-        getGameScene().addUINode(computery);
+        FXGL.getGameScene().addUINode(computery);
 
-        // UI TEXT.
         Text textHp = new Text();
         textHp.setTranslateX(10);
+<<<<<<< Updated upstream
         textHp.setTranslateY(40);
         textHp.textProperty().bind(getWorldProperties().intProperty("currentHp").asString());
         getGameScene().addUINode(textHp);
+=======
+        textHp.setTranslateY(50);
+        textHp.textProperty().bind(FXGL.getWorldProperties().intProperty("currentHP").asString("HP: %d"));
+        FXGL.getGameScene().addUINode(textHp);
+>>>>>>> Stashed changes
     }
 
-    /**
-     * Manage what happens in the game every tpf.
-     * */
     @Override
     protected void onUpdate(double tpf) {
+<<<<<<< Updated upstream
+=======
+        if (isPaused) return;
+
+>>>>>>> Stashed changes
         try {
             Point2D velocity = ball.getObject("velocity");
-            ball.translate(velocity);
+
+            if (ballLaunched && velocity != null) {
+                ball.translate(velocity);
+            }
 
             if (velocity == null) {
                 velocity = new Point2D(BALL_SPEED, BALL_SPEED);
                 ball.setProperty("velocity", velocity);
             }
 
-            if (ball.getX() <= 0) {
-                ball.setX(0);
-                ball.setProperty("velocity", new Point2D(-velocity.getX(), velocity.getY()));
+            if (velocity != null) {
+                if (ball.getX() <= 0) {
+                    ball.setX(0);
+                    ball.setProperty("velocity", new Point2D(-velocity.getX(), velocity.getY()));
+                }
+
+                if (ball.getRightX() >= getAppWidth()) {
+                    ball.setX(getAppWidth() - BALL_SIZE);
+                    ball.setProperty("velocity", new Point2D(-velocity.getX(), velocity.getY()));
+                }
+
+                if (ball.getY() <= 0) {
+                    ball.setY(0);
+                    ball.setProperty("velocity", new Point2D(velocity.getX(), -velocity.getY()));
+                }
             }
 
+<<<<<<< Updated upstream
             if (ball.getRightX() >= getAppWidth()) {
                 ball.setX(getAppWidth() - BALL_SIZE);
                 ball.setProperty("velocity", new Point2D(-velocity.getX(), velocity.getY()));
@@ -237,34 +318,127 @@ protected void initGameVars(Map<String, Object> vars) {
 
                 System.out.println("Ball out! Hp còn : " + currentHp);
                 if (currentHp <= 0) {
+=======
+            if (ball.getBottomY() > getAppHeight()) {
+                FXGL.play("killzone.wav");
+                var hpProp = FXGL.getWorldProperties().intProperty("currentHP");
+                int currentHP = Math.max(0, hpProp.get() - 1);
+                hpProp.set(currentHP);
+
+                System.out.println("Ball out! Hp còn : " + currentHP);
+                if (currentHP <= 0) {
+>>>>>>> Stashed changes
                     onGameOver();
                 } else {
                     resetBall();
                 }
                 return;
             }
-        } catch (ClassCastException cce) {
-            System.err.println("ClassCastException trong onUpdate: " + cce.getMessage());
-            cce.printStackTrace();
-        } catch (NullPointerException npe) {
-            System.err.println("NullPointerException trong onUpdate: " + npe.getMessage());
-            npe.printStackTrace();
         } catch (Exception ex) {
-            System.err.println("Exception bất ngờ trong onUpdate: " + ex);
             ex.printStackTrace();
         }
     }
 
-    /**
-     * Reset ball's position to a fixed point.
-     * */
+    private void showLevelSelect() {
+        StackPane pane = new StackPane();
+        pane.setPrefSize(getAppWidth(), getAppHeight());
+
+        VBox v = new VBox(12);
+        v.setStyle("-fx-alignment: center; -fx-padding: 20; -fx-background-color: rgba(0,0,0,0.6);");
+        v.setPrefWidth(420);
+        v.setPrefHeight(300);
+
+        Text title = new Text("SELECT LEVEL");
+        title.setStyle("-fx-font-size: 26px; -fx-fill: white;");
+
+        Button btnL1 = new Button("Level 1 — Tutorial");
+        btnL1.setPrefWidth(300);
+        btnL1.setOnAction(e -> {
+            try { FXGL.getGameScene().removeUINode(pane); } catch (Exception ignore) {}
+            startTutorialUsingExisting(true);
+        });
+
+        Button btnBack = new Button("Back to Menu");
+        btnBack.setPrefWidth(300);
+        btnBack.setOnAction(e -> {
+            try { FXGL.getGameScene().removeUINode(pane); } catch (Exception ignore) {}
+            FXGL.getGameController().gotoMainMenu();
+        });
+
+        v.getChildren().addAll(title, btnL1, btnBack);
+        pane.getChildren().add(v);
+
+        StackPane.setAlignment(v, javafx.geometry.Pos.CENTER);
+
+        FXGL.getGameScene().addUINode(pane);
+    }
+
+    private void startTutorialUsingExisting(boolean showTutorialOverlay) {
+        currentLevel = 1;
+
+        FXGL.getWorldProperties().intProperty("pixelsMoved").set(0);
+        FXGL.getWorldProperties().intProperty("score").set(0);
+        FXGL.getWorldProperties().intProperty("currentHP").set(3);
+
+        if (paddle == null) paddle = spawn("paddle", getAppWidth() / 2.0 - 60, getAppHeight() - 120);
+        if (ball == null) {
+            ball = spawn("ball", getAppWidth() / 2.0, getAppHeight() / 2.0);
+            ball.setProperty("velocity", Point2D.ZERO);
+            ballLaunched = false;
+        }
+
+        if (!showTutorialOverlay) {
+            ball.setProperty("velocity", new Point2D(BALL_SPEED, BALL_SPEED));
+            ballLaunched = true;
+            isPaused = false;
+        } else {
+            VBox v = new VBox(8);
+            v.setStyle("-fx-background-color: rgba(0,0,0,0.7); -fx-padding: 12; -fx-alignment: center;");
+            v.setPrefWidth(460);
+            v.setTranslateX((double) getAppWidth() / 2 - 230);
+            v.setTranslateY(40);
+
+            Text title = new Text("TUTORIAL");
+            title.setStyle("-fx-font-size: 20px; -fx-fill: white;");
+            Text line1 = new Text("Move left / right: A / D");
+            line1.setStyle("-fx-fill: white;");
+            Text line2 = new Text("Press SPACE to launch the ball. If ball falls you lose HP.");
+            line2.setStyle("-fx-fill: white;");
+
+            Button btnStart = new Button("Start");
+            btnStart.setOnAction(e -> {
+                try { FXGL.getGameScene().removeUINode(tutorialOverlay); } catch (Exception ignore) {}
+                tutorialOverlay = null;
+                isPaused = false;
+            });
+            btnStart.setFocusTraversable(false);
+
+            v.getChildren().addAll(title, line1, line2, btnStart);
+
+            tutorialOverlay = new StackPane(v);
+            tutorialOverlay.setPickOnBounds(false);
+            FXGL.getGameScene().addUINode(tutorialOverlay);
+
+            isPaused = true;
+        }
+
+        System.out.println("[LEVEL] Tutorial started using existing spawns; showOverlay=" + showTutorialOverlay);
+    }
+
     private void resetBall() {
+<<<<<<< Updated upstream
          if (paddle == null || ball == null) {
              System.err.println("resetBallAbovePaddle: paddle hoặc ball = null");
              return;
     }
         ball.setPosition((double) getAppWidth() / 2 - (double) BALL_SIZE / 2, (double) getAppHeight() / 2 - (double) BALL_SIZE / 2);
         ball.setProperty("velocity", new Point2D(BALL_SPEED, BALL_SPEED));
+=======
+        ballLaunched = false;
+        if (ball == null) return;
+        ball.setProperty("velocity", Point2D.ZERO);
+        ball.setPosition(getAppWidth() / 2.0 - BALL_SIZE / 2.0, getAppHeight() / 2.0 - BALL_SIZE / 2.0);
+>>>>>>> Stashed changes
     }
 
     private void onGameOver() {
@@ -355,11 +529,11 @@ protected void initGameVars(Map<String, Object> vars) {
 >>>>>>> Stashed changes
     }
 
-    /**
-     * Game launch.
-     * */
     public static void main(String[] args) {
         launch(args);
     }
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 }
