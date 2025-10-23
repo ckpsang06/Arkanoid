@@ -2,6 +2,7 @@ package org.arkanoid.scenes;
 
 import com.almasb.fxgl.app.scene.FXGLMenu;
 import com.almasb.fxgl.app.scene.MenuType;
+import com.almasb.fxgl.audio.Music;
 import com.almasb.fxgl.dsl.FXGL;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -18,6 +19,7 @@ public class PauseMenu extends FXGLMenu {
 
     public PauseMenu(MenuType type) {
         super(type);
+//        MusicHandler.pauseMusic();
 
         Rectangle dimmedBackground = new Rectangle(FXGL.getAppWidth(), FXGL.getAppHeight());
         dimmedBackground.setFill(javafx.scene.paint.Color.color(0, 0, 0, 0.6));
@@ -38,10 +40,16 @@ public class PauseMenu extends FXGLMenu {
         box.setAlignment(Pos.CENTER);
 
         Button resumeBtn = FXGL.getUIFactoryService().newButton("Resume");
-        resumeBtn.setOnAction(e -> fireResume());
+        resumeBtn.setOnAction(e -> {
+            MusicHandler.resumeMusic();
+            fireResume();
+        });
 
         Button mainMenuBtn = FXGL.getUIFactoryService().newButton("Main Menu");
-        mainMenuBtn.setOnAction(e -> fireExitToMainMenu());
+        mainMenuBtn.setOnAction(e -> {
+            MusicHandler.playMenuMusic();
+            FXGL.getGameController().gotoMainMenu();
+        });
 
         box.getChildren().addAll(resumeBtn, mainMenuBtn);
 

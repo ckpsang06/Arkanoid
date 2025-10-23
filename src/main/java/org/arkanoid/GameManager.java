@@ -2,20 +2,14 @@ package org.arkanoid;
 
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.app.GameSettings;
-import com.almasb.fxgl.app.scene.FXGLMenu;
-import com.almasb.fxgl.app.scene.MenuType;
-import com.almasb.fxgl.audio.Music;
-import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
-import javafx.scene.media.AudioClip;
 import javafx.scene.text.Text;
 import java.util.Map;
 import java.util.Random;
 
-import org.arkanoid.component.*;
 import org.arkanoid.entity.*;
 import org.arkanoid.factory.GameBackgroundFactory;
 import org.arkanoid.factory.GameEntityFactory;
@@ -24,13 +18,10 @@ import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
 import static com.almasb.fxgl.dsl.FXGL.spawn;
 import static com.almasb.fxgl.dsl.FXGLForKtKt.*;
 import static org.arkanoid.entity.Ball.*;
-import static org.arkanoid.entity.Brick.getBrickSize;
 import static org.arkanoid.entity.Paddle.getPaddleSpeed;
 
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import org.arkanoid.factory.GameSceneFactory;
-import org.arkanoid.scenes.PauseMenu;
 import org.arkanoid.utility.MusicHandler;
 import org.arkanoid.utility.PhysicsHandler;
 
@@ -73,9 +64,19 @@ public class GameManager extends GameApplication {
             }
         });
 
-//        FXGL.onKey(KeyCode.ESCAPE, () -> {
-//            MusicHandler.pauseMusic();
-//        });
+        FXGL.onKeyDown(KeyCode.ESCAPE, () -> {
+//            if (!isPaused) {
+//                System.out.println("Paused!");
+//                MusicHandler.pauseMusic();
+//                isPaused = true;
+//            }
+//            else if (isPaused) {
+//                System.out.println("Unpaused!");
+//                MusicHandler.resumeMusic();
+//                isPaused = false;
+//            }
+            MusicHandler.pauseMusic();
+        });
 
         FXGL.onKeyDown(KeyCode.SPACE, () -> {
             if (!ballLaunched) {
@@ -277,7 +278,7 @@ public class GameManager extends GameApplication {
     }
 
     private void onGameOver() {
-        GameOver_PauseManager.onGameOver();
+        GameOverManager.onGameOver();
     }
 
     /**

@@ -21,7 +21,7 @@ import static org.arkanoid.GameManager.gameOverOverlay;
 import static org.arkanoid.GameManager.gameOverVisible;
 import static org.arkanoid.GameManager.isPaused;
 
-public class GameOver_PauseManager {
+public class GameOverManager {
     public static void onGameOver() {
         System.out.println("Game Over!");
         showGameOver();
@@ -54,19 +54,19 @@ public class GameOver_PauseManager {
         restartButton.setPrefWidth(120);
         restartButton.setFocusTraversable(false);
         restartButton.setOnAction(e -> {
-            MusicHandler.playLevelMusic();
             hideGameOver();
             FXGL.getGameController().startNewGame();
+            MusicHandler.playLevelMusic();
         });
 
         // Back to Main Menu Button
-        Button mainMenuButton = new Button("Main Menu");
+        Button mainMenuButton = new Button("Exit");
         mainMenuButton.setPrefWidth(120);
         mainMenuButton.setFocusTraversable(false);
         mainMenuButton.setOnAction(e -> {
-            MusicHandler.playMenuMusic();
             hideGameOver();
             FXGL.getGameController().gotoMainMenu();
+            MusicHandler.playMenuMusic();
         });
 
         HBox buttonsContainer = new HBox(10, restartButton, mainMenuButton);
@@ -104,7 +104,7 @@ public class GameOver_PauseManager {
         FXGL.getGameController().pauseEngine();
         FXGL.getInput().setProcessInput(false);
 
-        GameManager.isPaused = true;
+//        GameManager.isPaused = true;
     }
 
     public static void hideGameOver() {

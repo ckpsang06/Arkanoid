@@ -52,9 +52,10 @@ public class MainMenu extends FXGLMenu {
         ImageView curtainView = new ImageView(curtain);
         Image dropShadow = image("dropshadow.png");
         ImageView dropShadowView = new ImageView(dropShadow);
+        dropShadowView.setOpacity(0.6);
 
         StackPane topPane = new StackPane(titleView);
-        topPane.setPadding(new Insets(50, 0, 0, 0));
+        topPane.setPadding(new Insets(20, 0, 0, 0));
         topPane.setAlignment(Pos.TOP_CENTER);
 
         // Buttons
