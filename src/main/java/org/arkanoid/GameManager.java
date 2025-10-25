@@ -5,13 +5,9 @@ import com.almasb.fxgl.app.GameSettings;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import javafx.geometry.Point2D;
-import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import java.util.Map;
-import java.util.Random;
-import java.util.logging.Level;
 
 import org.arkanoid.entity.*;
 import org.arkanoid.factory.GameBackgroundFactory;
@@ -21,25 +17,25 @@ import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
 import static com.almasb.fxgl.dsl.FXGL.spawn;
 import static com.almasb.fxgl.dsl.FXGLForKtKt.*;
 import static org.arkanoid.entity.Ball.*;
-import static org.arkanoid.entity.Brick.getBrickSize;
 import static org.arkanoid.entity.Paddle.getPaddleSpeed;
 
 import javafx.scene.layout.StackPane;
 import org.arkanoid.factory.GameSceneFactory;
+import org.arkanoid.level.LevelSelector;
 import org.arkanoid.utility.MusicHandler;
 import org.arkanoid.utility.PhysicsHandler;
 
 public class GameManager extends GameApplication {
-    protected static Entity paddle;
+    public static Entity paddle;
     public static int movetype = 0;
-    protected static Entity ball;
+    public static Entity ball;
 
-    protected static boolean ballLaunched = false;
+    public static boolean ballLaunched = false;
 
     // UI fields
     protected static StackPane gameOverOverlay;
     protected static boolean gameOverVisible = false;
-    protected static boolean isPaused = false;
+    public static boolean isPaused = false;
 
 
     /**
@@ -101,8 +97,6 @@ public class GameManager extends GameApplication {
         getGameWorld().addEntityFactory(new GameEntityFactory());
         getGameWorld().addEntityFactory(new GameBackgroundFactory());
 
-        spawn("grassBackground", 0, 0);
-
         paddle = spawn("paddle", 400, 600);
 
         ball = spawn("ball", getAppWidth() / 2.0, getAppHeight() / 2.0 + 50);
@@ -112,9 +106,11 @@ public class GameManager extends GameApplication {
             spawn("brick", 5 + i * (getAppWidth() / 15 + 5), 200);
             spawn("brick", 5 + i * (getAppWidth() / 15 + 5), 300);
         }
+
+        spawn("grassBackground", 0, 0);
         LevelSelector.showLevelSelect();
     }
-    
+
     /**
      * Manage the physics between entities in the games.
      * PLEASE PLEASE PLEASE REMEMBER TO REFACTOR THIS LATER

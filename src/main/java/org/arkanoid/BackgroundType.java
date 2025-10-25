@@ -1,5 +1,5 @@
 package org.arkanoid;
 
 public enum BackgroundType {
-    GRASS
+    GRASS, GRID, FOREST, HELL, SPACE
 }
