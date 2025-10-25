@@ -22,6 +22,8 @@ import static org.arkanoid.GameManager.gameOverVisible;
 import static org.arkanoid.GameManager.isPaused;
 
 public class GameOverManager {
+
+
     public static void onGameOver() {
         System.out.println("Game Over!");
         showGameOver();
@@ -33,7 +35,7 @@ public class GameOverManager {
 
         // Dimmed Background initiation
         Rectangle dimmedBackground = new Rectangle(getAppWidth(), getAppHeight());
-        dimmedBackground.setFill(javafx.scene.paint.Color.color(0, 0, 0, 0.6));
+        dimmedBackground.setFill(javafx.scene.paint.Color.color(0, 0, 0, 0.9));
 
         VBox vbox = new VBox(12);
         vbox.setPrefWidth(320);
@@ -42,8 +44,8 @@ public class GameOverManager {
 
         // Ảnh gameover (texture)
         var gameOverImage = FXGL.getAssetLoader().loadTexture("gameover.png");
-        gameOverImage.setFitWidth(300);
-        gameOverImage.setFitHeight(100);
+        gameOverImage.setFitWidth(600);
+        gameOverImage.setFitHeight(400);
 
         // Score gotten
         Text finalScore = new Text("Score: " + getWorldProperties().intProperty("score").get());

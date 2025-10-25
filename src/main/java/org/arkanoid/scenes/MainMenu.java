@@ -5,7 +5,10 @@ import com.almasb.fxgl.app.scene.MenuType;
 import com.almasb.fxgl.dsl.FXGL;
 import javafx.animation.TranslateTransition;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -21,7 +24,7 @@ import javafx.util.Duration;
 import org.arkanoid.utility.MusicHandler;
 import org.jetbrains.annotations.NotNull;
 import javafx.geometry.Insets;
-
+import javafx.scene.control.Label;
 import java.awt.*;
 
 import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
@@ -42,8 +45,8 @@ public class MainMenu extends FXGLMenu {
         titleView.setFitWidth(600);
         titleView.setPreserveRatio(true);
 
-        TranslateTransition floatAnim = new TranslateTransition(Duration.seconds(2), titleView);
-        floatAnim.setByY(-20); // Move up by 20 pixels
+        TranslateTransition floatAnim = new TranslateTransition(Duration.seconds(2.5), titleView);
+        floatAnim.setByY(-20);// Move up by 20 pixels
         floatAnim.setAutoReverse(true); // Reverse the direction
         floatAnim.setCycleCount(TranslateTransition.INDEFINITE); // Loop forever
         floatAnim.play();
@@ -52,7 +55,7 @@ public class MainMenu extends FXGLMenu {
         ImageView curtainView = new ImageView(curtain);
         Image dropShadow = image("dropshadow.png");
         ImageView dropShadowView = new ImageView(dropShadow);
-        dropShadowView.setOpacity(0.6);
+        dropShadowView.setOpacity(0.5);
 
         StackPane topPane = new StackPane(titleView);
         topPane.setPadding(new Insets(20, 0, 0, 0));
@@ -67,6 +70,10 @@ public class MainMenu extends FXGLMenu {
         });
 
         Button btnOptions = FXGL.getUIFactoryService().newButton("Options");
+        btnOptions.setOnAction(e -> {
+            showOptionsMenu();
+        });
+
         Button btnCredits = FXGL.getUIFactoryService().newButton("Credits");
 
         Button btnExit = FXGL.getUIFactoryService().newButton("Exit");
@@ -94,5 +101,37 @@ public class MainMenu extends FXGLMenu {
         getContentRoot().getChildren().addAll(curtainView, dropShadowView);
         getContentRoot().getChildren().add(wrapper);
     }
+
+    private void showOptionsMenu() {
+        VBox optionsBox = new VBox(15);
+        optionsBox.setAlignment(Pos.CENTER);
+        optionsBox.setTranslateX(FXGL.getAppWidth() / 2 - 100);
+        optionsBox.setTranslateY(FXGL.getAppHeight() / 2 - 100);
+
+        Label title = new Label("Options");
+
+        CheckBox soundToggle = new CheckBox("Enable Sound");
+        soundToggle.selectedProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal) {
+                // bật lại nhạc
+                FXGL.getSettings().setGlobalMusicVolume(1);
+            } else {
+                // tắt nhạc
+                FXGL.getSettings().setGlobalMusicVolume(0);
+            }
+        });
+
+        ComboBox<String> difficultyBox = new ComboBox<>();
+        difficultyBox.getItems().addAll("Easy", "Normal", "Hard");
+        difficultyBox.setValue("Normal");
+
+        Button backButton = FXGL.getUIFactoryService().newButton("Back");
+        backButton.setOnAction(e -> getContentRoot().getChildren().remove(optionsBox));
+
+        optionsBox.getChildren().addAll(title, soundToggle, difficultyBox, backButton);
+
+        getContentRoot().getChildren().add(optionsBox);
+    }
+
 
 }

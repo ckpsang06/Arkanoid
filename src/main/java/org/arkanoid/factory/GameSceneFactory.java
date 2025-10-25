@@ -25,7 +25,6 @@ public class GameSceneFactory extends SceneFactory {
     @NotNull
     @Override
     public FXGLMenu newGameMenu() {
-            return new PauseMenu(MenuType.GAME_MENU);
+        return new PauseMenu(MenuType.GAME_MENU);
     }
 }
-
