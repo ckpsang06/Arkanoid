@@ -21,7 +21,9 @@ import static org.arkanoid.GameManager.gameOverOverlay;
 import static org.arkanoid.GameManager.gameOverVisible;
 import static org.arkanoid.GameManager.isPaused;
 
-public class GameOver_PauseManager {
+public class GameOverManager {
+
+
     public static void onGameOver() {
         System.out.println("Game Over!");
         showGameOver();
@@ -33,7 +35,7 @@ public class GameOver_PauseManager {
 
         // Dimmed Background initiation
         Rectangle dimmedBackground = new Rectangle(getAppWidth(), getAppHeight());
-        dimmedBackground.setFill(javafx.scene.paint.Color.color(0, 0, 0, 0.6));
+        dimmedBackground.setFill(javafx.scene.paint.Color.color(0, 0, 0, 0.9));
 
         VBox vbox = new VBox(12);
         vbox.setPrefWidth(320);
@@ -42,8 +44,8 @@ public class GameOver_PauseManager {
 
         // Ảnh gameover (texture)
         var gameOverImage = FXGL.getAssetLoader().loadTexture("gameover.png");
-        gameOverImage.setFitWidth(300);
-        gameOverImage.setFitHeight(100);
+        gameOverImage.setFitWidth(600);
+        gameOverImage.setFitHeight(400);
 
         // Score gotten
         Text finalScore = new Text("Score: " + getWorldProperties().intProperty("score").get());
@@ -54,19 +56,19 @@ public class GameOver_PauseManager {
         restartButton.setPrefWidth(120);
         restartButton.setFocusTraversable(false);
         restartButton.setOnAction(e -> {
-            MusicHandler.playLevelMusic();
             hideGameOver();
             FXGL.getGameController().startNewGame();
+            MusicHandler.playLevelMusic();
         });
 
         // Back to Main Menu Button
-        Button mainMenuButton = new Button("Main Menu");
+        Button mainMenuButton = new Button("Exit");
         mainMenuButton.setPrefWidth(120);
         mainMenuButton.setFocusTraversable(false);
         mainMenuButton.setOnAction(e -> {
-            MusicHandler.playMenuMusic();
             hideGameOver();
             FXGL.getGameController().gotoMainMenu();
+            MusicHandler.playMenuMusic();
         });
 
         HBox buttonsContainer = new HBox(10, restartButton, mainMenuButton);
@@ -104,7 +106,7 @@ public class GameOver_PauseManager {
         FXGL.getGameController().pauseEngine();
         FXGL.getInput().setProcessInput(false);
 
-        GameManager.isPaused = true;
+//        GameManager.isPaused = true;
     }
 
     public static void hideGameOver() {
