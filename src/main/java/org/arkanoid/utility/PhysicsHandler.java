@@ -2,6 +2,8 @@ package org.arkanoid.utility;
 
 import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.dsl.FXGL;
+import com.almasb.fxgl.physics.BoundingShape;
+import com.almasb.fxgl.physics.HitBox;
 import javafx.geometry.Point2D;
 import org.arkanoid.GameManager;
 import org.arkanoid.component.HPComponent;
@@ -21,12 +23,21 @@ public class PhysicsHandler {
             // HP reduction for brick
             HPComponent hp = brick.getComponent(HPComponent.class);
             hp.damage(1);
-            if(hp.getHP() <= 0) {
-                if (rand.nextBoolean()) spawn("heal_item", brick.getX(), brick.getY());
+            if (hp.getHP() <= 0) {
                 brick.removeFromWorld();
                 FXGL.play("brick_break.wav");
-            }
 
+                // Xác suất rơi item
+                int dropChance = rand.nextInt(100); // random 0 - 99
+
+                if (dropChance < 20) {
+                    // 20% rơi Heal Item
+                    spawn("heal_item", brick.getX(), brick.getY());
+                } else if (dropChance < 40) {
+                    // 20% rơi Expand Item
+                    spawn("expand_item", brick.getX(), brick.getY());
+                }
+            }
             // Scoring and Brick Hitting
             FXGL.inc("score", 1);
             FXGL.play("land.wav");
@@ -68,6 +79,32 @@ public class PhysicsHandler {
                 FXGL.inc("currentHP", +PowerUpPickup.getHealItemValue());
             }
             heal_item.removeFromWorld();
+            return null;
+        });
+    }
+
+    public static void paddle_expandItemCollision() {
+        onCollisionBegin(EntityType.PADDLE, EntityType.EXPAND_ITEM, (paddle, expand_item) -> {
+            FXGL.play("power_up.wav");
+            var paddleView = (javafx.scene.image.ImageView) paddle.getViewComponent().getChildren().get(0);
+            double currentWidth = paddleView.getFitWidth();
+            double newWidth = currentWidth * 1.5;
+            paddleView.setFitWidth(newWidth);
+            paddle.getBoundingBoxComponent().clearHitBoxes();
+            paddle.getBoundingBoxComponent().addHitBox(
+                    new HitBox("main", BoundingShape.box(newWidth, paddleView.getFitHeight()))
+            );
+            expand_item.removeFromWorld();
+            FXGL.runOnce(() -> {
+                double reducedWidth = paddleView.getFitWidth() / 1.5;
+                paddleView.setFitWidth(reducedWidth);
+
+                paddle.getBoundingBoxComponent().clearHitBoxes();
+                paddle.getBoundingBoxComponent().addHitBox(
+                        new HitBox("main", BoundingShape.box(reducedWidth, paddleView.getFitHeight()))
+                );
+            }, javafx.util.Duration.seconds(8));
+
             return null;
         });
     }

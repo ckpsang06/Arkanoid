@@ -7,6 +7,7 @@ public class MusicHandler {
 
     private static Music tutorialTheme;
     private static Music mainMenuTheme;
+    private static Music spaceTheme;
     private static Music currentMusic;
 
     public static void playLevelMusic() {
@@ -28,18 +29,29 @@ public class MusicHandler {
         System.out.println("Menu Music Played");
     }
 
+    public static void playSpaceMusic() {
+        ensureLoaded();
+        stopAllKnownMusic();
+
+        currentMusic = spaceTheme;
+        FXGL.getAudioPlayer().loopMusic(currentMusic);
+        System.out.println("Space Music Played");
+    }
+
     private static void ensureLoaded() {
         if (tutorialTheme == null)
             tutorialTheme = FXGL.getAssetLoader().loadMusic("tutorial_theme.mp3");
         if (mainMenuTheme == null)
             mainMenuTheme = FXGL.getAssetLoader().loadMusic("menu_theme.mp3");
+        if (spaceTheme == null)
+            spaceTheme = FXGL.getAssetLoader().loadMusic("space_theme.mp3");
     }
 
     private static void stopAllKnownMusic() {
-        if (tutorialTheme != null)
-            FXGL.getAudioPlayer().stopMusic(tutorialTheme);
-        if (mainMenuTheme != null)
-            FXGL.getAudioPlayer().stopMusic(mainMenuTheme);
+//        if (tutorialTheme != null)
+//            FXGL.getAudioPlayer().stopMusic(tutorialTheme);
+//        if (mainMenuTheme != null)
+//            FXGL.getAudioPlayer().stopMusic(mainMenuTheme);
         FXGL.getAudioPlayer().stopAllMusic(); // Just in case
     }
 

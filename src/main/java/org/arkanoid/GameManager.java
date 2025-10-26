@@ -97,15 +97,15 @@ public class GameManager extends GameApplication {
         getGameWorld().addEntityFactory(new GameEntityFactory());
         getGameWorld().addEntityFactory(new GameBackgroundFactory());
 
-        paddle = spawn("paddle", 400, 600);
+//        paddle = spawn("paddle", 400, 600);
+//
+//        ball = spawn("ball", getAppWidth() / 2.0, getAppHeight() / 2.0 + 50);
+//        ball.setProperty("velocity", Point2D.ZERO); // No movement yet
 
-        ball = spawn("ball", getAppWidth() / 2.0, getAppHeight() / 2.0 + 50);
-        ball.setProperty("velocity", Point2D.ZERO); // No movement yet
-
-        for (int i = 0; i < 15; i++) {
-            spawn("brick", 5 + i * (getAppWidth() / 15 + 5), 200);
-            spawn("brick", 5 + i * (getAppWidth() / 15 + 5), 300);
-        }
+//        for (int i = 0; i < 15; i++) {
+//            spawn("brick", 5 + i * (getAppWidth() / 15 + 5), 200);
+//            spawn("brick", 5 + i * (getAppWidth() / 15 + 5), 300);
+//        }
 
         spawn("grassBackground", 0, 0);
         LevelSelector.showLevelSelect();
@@ -120,6 +120,7 @@ public class GameManager extends GameApplication {
         PhysicsHandler.ball_brickCollision();
         PhysicsHandler.ball_paddleCollision();
         PhysicsHandler.paddle_healItemCollision();
+        PhysicsHandler.paddle_expandItemCollision();
     }
 
     /**
@@ -182,7 +183,7 @@ public class GameManager extends GameApplication {
             ball.translate(velocity);
 
             for (Entity e : FXGL.getGameWorld().getEntities()) {
-                if (e.getType() == EntityType.HEAL_ITEM) {
+                if (e.getType() == EntityType.HEAL_ITEM || e.getType() == EntityType.EXPAND_ITEM) {
                     e.translateY(PowerUpPickup.getPowerUpSpeed());
                 }
             }

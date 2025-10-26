@@ -2,6 +2,7 @@ package org.arkanoid.level;
 
 import org.arkanoid.GameManager;
 import org.arkanoid.utility.GameState;
+import org.arkanoid.utility.MusicHandler;
 
 import java.util.List;
 
@@ -31,6 +32,7 @@ public class LevelManager {
                 break;
             default:
                 LevelBuilder.buildLine("spaceBackground", 15, 200, 60);
+                MusicHandler.playSpaceMusic();
                 break;
         }
 

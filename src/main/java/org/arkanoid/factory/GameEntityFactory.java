@@ -28,10 +28,16 @@ import java.awt.*;
 public class GameEntityFactory implements EntityFactory {
     @Spawns("paddle")
     public Entity newPaddle(SpawnData data) {
+        Image paddleImage = image("paddle.png");
+        ImageView paddleView = new ImageView(paddleImage);
+
+        paddleView.setFitWidth(getPaddleWidth());
+        paddleView.setFitHeight(getPaddleHeight());
+
         return entityBuilder(data)
                 .type(EntityType.PADDLE)
-                .viewWithBBox(new Rectangle(getPaddleWidth(), getPaddleHeight()))
-                .with("moveType", Integer.valueOf(0))
+                .viewWithBBox(paddleView)
+                .with("moveType", 0)
                 .collidable()
                 .build();
     }
@@ -73,6 +79,21 @@ public class GameEntityFactory implements EntityFactory {
         return entityBuilder(data)
                 .type(EntityType.HEAL_ITEM)
                 .viewWithBBox(healItemView)
+                .collidable()
+                .build();
+    }
+
+    @Spawns("expand_item")
+    public Entity newExpandItem(SpawnData data) {
+        Image expandItemImage = image("expand_item.png");
+        ImageView expandItemView = new ImageView(expandItemImage);
+
+        expandItemView.setFitWidth(getPowerUpSize());
+        expandItemView.setFitHeight(getPowerUpSize());
+
+        return entityBuilder(data)
+                .type(EntityType.EXPAND_ITEM)
+                .viewWithBBox(expandItemView)
                 .collidable()
                 .build();
     }
