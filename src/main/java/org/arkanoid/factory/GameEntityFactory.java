@@ -54,7 +54,7 @@ public class GameEntityFactory implements EntityFactory {
 
     @Spawns("brick")
     public Entity newBrick(SpawnData data) {
-        Image brickImage = image("brick.png");
+        Image brickImage = image("brick_new.png");
         ImageView brickView = new ImageView(brickImage);
 
         brickView.setFitWidth(getBrickWidth());

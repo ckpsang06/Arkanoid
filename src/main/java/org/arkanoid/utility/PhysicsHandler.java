@@ -43,10 +43,10 @@ public class PhysicsHandler {
             FXGL.play("land.wav");
 
             Point2D velocity = ball.getObject("velocity");
-            if (FXGLMath.randomBoolean()) {
-                ball.setProperty("velocity", new Point2D(-velocity.getX(), velocity.getY()));
-            } else {
+            if (ball.getY() > brick.getY() || ball.getY() < brick.getY()) {
                 ball.setProperty("velocity", new Point2D(velocity.getX(), -velocity.getY()));
+            } else {
+                ball.setProperty("velocity", new Point2D(-velocity.getX(), velocity.getY()));
             }
             return null;
         });

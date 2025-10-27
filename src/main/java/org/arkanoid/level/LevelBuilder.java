@@ -52,6 +52,17 @@ public class LevelBuilder {
         }
     }
 
+    public static void buildLevel(String bg, int rows, int cols, double startY, double startX, double _spacing) {
+        setBackground(bg);
+        double brickW = getBrickSize();
+        double spacing = _spacing;
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                spawn("brick", startX + c * (brickW + spacing), startY + r * (brickW + 12));
+            }
+        }
+    }
+
     public static void spawnCoreEntities() {
         GameManager.paddle = spawn("paddle", getAppWidth() / 2.0 - 60, getAppHeight() - 120);
         ball = spawn("ball", getAppWidth() / 2.0, getAppHeight() / 2.0);
@@ -60,7 +71,7 @@ public class LevelBuilder {
     }
 
     public static void startTutorial(boolean showOverlay) {
-        buildLevel("grassBackground", 2, 15, 100, 150);
+        buildLevel("grassBackground", 1, 10, 200, getAppWidth()/11, getAppWidth()/15);
         if (showOverlay) {
             TutorialOverlay.show();
             isPaused = true;

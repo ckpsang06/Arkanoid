@@ -5,7 +5,7 @@ import static com.almasb.fxgl.dsl.FXGLForKtKt.getAppWidth;
 
 public class Ball extends MovableObject {
     public static int BALL_SPEED = 3;
-    public static final int BALL_SIZE = 25;
+    public static final int BALL_SIZE = 15;
     private int directionX;
     private int directionY;
 
