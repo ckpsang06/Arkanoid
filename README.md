@@ -4,15 +4,17 @@ Công việc thành viên:
 - Nguyễn Hải An:
   + Created the initial framework.
   + Conflict fixer and merger.
-  + Created main menu and pause menu.
+  + Finished up main menu and wrote pause menu.
+  + Bugfixer 1 (Levels, musics, etc.)
   + Creative director: sprites, SFXs and musics.
   + Wrote handlers for physics and musics.
 - Cao Khắc Phan Sang:
   + Created level selector.
+  + Created main menu.
   + Created game over menu.
 - Nguyễn Đức Khiêm:
-  + Bugfixer (Levels, musics, etc.)
-  + Additional component writer for bricks
+  + Bugfixer 2 (Levels, musics, etc.)
+  + Additional component writer for bricks.
   + Backgrounds finder.
   + Collision writer.
 - Bùi Hoàng Tùng:
