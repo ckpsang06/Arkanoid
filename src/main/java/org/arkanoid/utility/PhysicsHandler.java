@@ -1,15 +1,13 @@
 package org.arkanoid.utility;
 
-import com.almasb.fxgl.core.math.FXGLMath;
 import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import javafx.geometry.Point2D;
 import javafx.scene.text.Font;
-import org.arkanoid.GameManager;
 import org.arkanoid.component.HPComponent;
 import org.arkanoid.entity.Ball;
-import org.arkanoid.entity.EntityType;
+import org.arkanoid.factory.EntityType;
 import com.almasb.fxgl.entity.Entity;
 
 import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
@@ -101,9 +99,6 @@ public class PhysicsHandler {
             if (hp.getHP() <= 0) {
                 brick.removeFromWorld();
                 FXGL.play("brick_break.wav");
-
-                // Xác suất rơi item
-                // Xác suất rơi item
                 int dropChance = rand.nextInt(100); // random 0 - 99
 
                 if (dropChance < 10) {

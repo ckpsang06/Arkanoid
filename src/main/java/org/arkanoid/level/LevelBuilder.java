@@ -4,8 +4,7 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.entity.Entity;
 import javafx.geometry.Point2D;
 import org.arkanoid.GameManager;
-import org.arkanoid.entity.EntityType;
-import org.arkanoid.factory.GameBackgroundFactory;
+import org.arkanoid.factory.EntityType;
 
 import static com.almasb.fxgl.dsl.FXGLForKtKt.*;
 

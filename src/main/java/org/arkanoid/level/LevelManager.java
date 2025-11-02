@@ -3,7 +3,6 @@ package org.arkanoid.level;
 import com.almasb.fxgl.dsl.FXGL;
 import org.arkanoid.GameManager;
 import org.arkanoid.entity.Brick;
-import org.arkanoid.utility.GameState;
 import org.arkanoid.utility.MusicHandler;
 
 import java.util.List;
@@ -18,12 +17,16 @@ public class LevelManager {
         );
     }
 
+    public static void reset() {
+        FXGL.getWorldProperties().doubleProperty("pixelsMoved").set(0.0);
+        FXGL.getWorldProperties().intProperty("score").set(0);
+        FXGL.getWorldProperties().intProperty("currentHP").set(3);
+    }
+
     public static void startLevel(int levelId) {
-        GameState.reset();
+        reset();
         LevelBuilder.clearWorld();
-
         LevelSelector.inSelection = false;
-
         switch (levelId) {
             case 1:
                 LevelBuilder.startTutorial(true);

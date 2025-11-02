@@ -7,8 +7,6 @@ import com.almasb.fxgl.entity.Entity;
 import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import java.util.Map;
 import java.util.Random;
@@ -17,6 +15,7 @@ import javafx.scene.paint.Color;
 
 import org.arkanoid.component.AnimationComponent;
 import org.arkanoid.entity.*;
+import org.arkanoid.factory.EntityType;
 import org.arkanoid.factory.GameBackgroundFactory;
 import org.arkanoid.factory.GameEntityFactory;
 
@@ -29,6 +28,8 @@ import static org.arkanoid.entity.Paddle.getPaddleSpeed;
 import javafx.scene.layout.StackPane;
 import org.arkanoid.factory.GameSceneFactory;
 import org.arkanoid.level.LevelSelector;
+import org.arkanoid.scenes.GameOverManager;
+import org.arkanoid.scenes.GameWinManager;
 import org.arkanoid.utility.MusicHandler;
 import org.arkanoid.utility.PhysicsHandler;
 
@@ -36,10 +37,11 @@ public class GameManager extends GameApplication {
     public static Entity paddle;
     public static int movetype = 0;
     // UI fields
-    protected static StackPane gameOverOverlay;
-    protected static StackPane gameWinOverlay;
-    protected static boolean gameOverVisible = false;
-    protected static boolean gameWinVisible = false;
+    public static StackPane gameOverOverlay;
+    public static StackPane gameWinOverlay;
+    public static boolean gameOverVisible = false;
+    public static boolean gameWinVisible = false;
+
     public static boolean isPaused = false;
 
     /**

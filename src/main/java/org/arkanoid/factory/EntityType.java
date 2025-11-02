@@ -1,4 +1,4 @@
-package org.arkanoid.entity;
+package org.arkanoid.factory;
 
 public enum EntityType {
     PADDLE, BALL, BRICK, HEAL_ITEM, BALL_ITEM , BALLSPEED_ITEM, PADDLESPEED_ITEM, EXPAND_ITEM, HELL_BOSS, FIRE_BALL

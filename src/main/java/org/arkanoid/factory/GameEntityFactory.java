@@ -12,7 +12,6 @@ import static org.arkanoid.entity.PowerUpPickup.*;
 
 
 import com.almasb.fxgl.entity.Spawns;
-import com.almasb.fxgl.entity.components.CollidableComponent;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.HitBox;
 import javafx.geometry.Point2D;
@@ -22,10 +21,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import org.arkanoid.component.AnimationComponent;
-import org.arkanoid.entity.EntityType;
 import org.arkanoid.component.HPComponent;
-
-import java.awt.*;
 
 
 public class GameEntityFactory implements EntityFactory {

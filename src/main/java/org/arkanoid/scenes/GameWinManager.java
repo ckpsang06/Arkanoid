@@ -1,4 +1,4 @@
-package org.arkanoid;
+package org.arkanoid.scenes;
 
 import com.almasb.fxgl.dsl.FXGL;
 import javafx.animation.FadeTransition;

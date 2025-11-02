@@ -5,7 +5,6 @@ import com.almasb.fxgl.dsl.FXGL;
 import com.almasb.fxgl.logging.FileOutput;
 
 public class MusicHandler {
-
     private static Music tutorialTheme;
     private static Music mainMenuTheme;
     private static Music forestTheme;
@@ -13,6 +12,9 @@ public class MusicHandler {
     private static Music hellTheme;
     private static Music currentMusic;
 
+    /**
+     * Play the tutorial level's music.
+     * */
     public static void playLevelMusic() {
         ensureLoaded();
         stopAllKnownMusic();
@@ -74,11 +76,7 @@ public class MusicHandler {
     }
 
     private static void stopAllKnownMusic() {
-//        if (tutorialTheme != null)
-//            FXGL.getAudioPlayer().stopMusic(tutorialTheme);
-//        if (mainMenuTheme != null)
-//            FXGL.getAudioPlayer().stopMusic(mainMenuTheme);
-        FXGL.getAudioPlayer().stopAllMusic(); // Just in case
+        FXGL.getAudioPlayer().stopAllMusic();
     }
 
     public static void pauseMusic() {
