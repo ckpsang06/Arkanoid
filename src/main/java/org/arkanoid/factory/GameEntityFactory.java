@@ -45,17 +45,31 @@ public class GameEntityFactory implements EntityFactory {
                 .build();
     }
 
+    @Spawns("temp_paddle")
+    public Entity newTempPaddle(SpawnData data) {
+        return entityBuilder(data)
+                .type(EntityType.PADDLE)
+                .viewWithBBox(new Rectangle(0, 0))
+                .with("moveType", 0)
+                .collidable()
+                .build();
+    }
+
     @Spawns("ball")
     public Entity newBall(SpawnData data) {
+        Image ballImage = image("ball.png");
+        ImageView ballView = new ImageView(ballImage);
+
+        ballView.setFitWidth(getBallSize());
+        ballView.setFitHeight(getBallSize());
+
         Entity ball = entityBuilder(data)
                 .type(EntityType.BALL)
-                .viewWithBBox(new Circle(BALL_SIZE / 2, Color.BLUE))
+                .viewWithBBox(ballView)
                 .collidable()
                 .build();
 
-        // Cờ kiểm tra xem bóng đã bắn chưa
         ball.setProperty("isLaunched", false);
-        // Bóng chưa bắn thì chưa có vận tốc
         ball.setProperty("velocity", new Point2D(0, 0));
 
         return ball;
@@ -112,7 +126,7 @@ public class GameEntityFactory implements EntityFactory {
         ImageView brickView = new ImageView(brickImage);
 
         brickView.setFitWidth(getBrickWidth());
-        brickView.setFitHeight(getBrickSize());
+        brickView.setPreserveRatio(true);
 
         return entityBuilder(data)
                 .type(EntityType.BRICK)
@@ -128,7 +142,7 @@ public class GameEntityFactory implements EntityFactory {
         ImageView brickView = new ImageView(brickImage);
 
         brickView.setFitWidth(getBrickWidth());
-        brickView.setFitHeight(getBrickSize());
+        brickView.setPreserveRatio(true);
 
         return entityBuilder(data)
                 .type(EntityType.BRICK)
@@ -144,7 +158,7 @@ public class GameEntityFactory implements EntityFactory {
         ImageView brickView = new ImageView(brickImage);
 
         brickView.setFitWidth(getBrickWidth());
-        brickView.setFitHeight(getBrickSize());
+        brickView.setPreserveRatio(true);
 
         return entityBuilder(data)
                 .type(EntityType.BRICK)
@@ -156,15 +170,21 @@ public class GameEntityFactory implements EntityFactory {
 
     @Spawns("heal_item")
     public Entity newHealItem(SpawnData data) {
-        AnimationComponent healItemTexture = new AnimationComponent(
-                "heal_item_animated.png",8,60,25,1.0,0,7,
-                0,0,0,0,0,0);
-        Image healItemImage = image("heal_item_animated.png");
+//        AnimationComponent healItemTexture = new AnimationComponent(
+//                "heal_item_animated.png",8,60,25,1.0,0,7,
+//                0,0,0,0,0,0);
+//        Image healItemImage = image("heal_item_animated.png");
+
+        Image healItemImage = image("heal_item.png");
+        ImageView healItemView = new ImageView(healItemImage);
+
+        healItemView.setFitWidth(getPowerUpSize());
+        healItemView.setFitHeight(getPowerUpSize());
 
         return entityBuilder(data)
                 .type(EntityType.HEAL_ITEM)
-                .with(healItemTexture)
-                .bbox(new HitBox(BoundingShape.box(60,25)))
+//                .with(healItemTexture)
+                .viewWithBBox(healItemView)
                 .collidable()
                 .build();
     }
@@ -203,8 +223,7 @@ public class GameEntityFactory implements EntityFactory {
     public Entity newballspeedItem(SpawnData data) {
         Image image = image("ballspeed_item.png");
         ImageView view = new ImageView(image);
-
-        double enlargedSize = getPowerUpSize() * 2.5;
+        double enlargedSize = getPowerUpSize();
 
         view.setFitWidth(enlargedSize);
         view.setFitHeight(enlargedSize);
@@ -220,7 +239,8 @@ public class GameEntityFactory implements EntityFactory {
     public Entity newpaddlespeedItem(SpawnData data) {
         Image image = image("paddlespeed_item.png");
         ImageView view = new ImageView(image);
-        double enlargedSize = getPowerUpSize() * 2.5;
+        double enlargedSize = getPowerUpSize();
+
         view.setFitWidth(enlargedSize);
         view.setFitHeight(enlargedSize);
 

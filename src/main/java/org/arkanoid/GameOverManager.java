@@ -25,6 +25,7 @@ public class GameOverManager {
     public static void onGameOver() {
         System.out.println("Game Over!");
         LevelSelector.inSelection = true;
+        FXGL.play("lose.wav");
         showGameOver();
     }
 

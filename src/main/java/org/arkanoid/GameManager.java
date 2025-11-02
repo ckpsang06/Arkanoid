@@ -112,6 +112,7 @@ public class GameManager extends GameApplication {
         getGameWorld().addEntityFactory(new GameEntityFactory());
         getGameWorld().addEntityFactory(new GameBackgroundFactory());
         spawn("grassBackground", 0, 0);
+        paddle = spawn("temp_paddle", 0, 0);
         LevelSelector.showLevelSelect();
     }
 
@@ -146,7 +147,7 @@ public class GameManager extends GameApplication {
     }
 
     /**
-     * Manage the game's UI code.
+     * Manage the game's UI code, including timer, score and HP.
      * */
     @Override
     protected void initUI() {
@@ -158,6 +159,9 @@ public class GameManager extends GameApplication {
         addHealthUI(pixelmixFont);
     }
 
+    /**
+     * Load font with specified parameters
+     * */
     private Font loadFont(String path, int size) {
         return Font.loadFont(getClass().getResourceAsStream(path), size);
     }
@@ -218,14 +222,21 @@ public class GameManager extends GameApplication {
 
     /**
      * Manage what happens in the game every tpf.
+     * Including: timer's clock
      * */
     @Override
     protected void onUpdate(double tpf) {
-        // Cập nhật thời gian
+        // Update timer
         double elapsed = FXGL.getd("elapsedTime");
         FXGL.set("elapsedTime", elapsed + tpf);
 
-        // Di chuyển các power-up item
+        // Paddle's HP when falling below 0 will trigger gameOver
+        var hpProp = getWorldProperties().intProperty("currentHP");
+        if (hpProp.get() == 0) {
+            GameOverManager.onGameOver();
+        }
+
+        // Power-up items position translation
         for (Entity e : FXGL.getGameWorld().getEntities()) {
             if (e.getType() == EntityType.HEAL_ITEM
                     || e.getType() == EntityType.EXPAND_ITEM
@@ -236,50 +247,42 @@ public class GameManager extends GameApplication {
             }
         }
 
+        // Add balls that fall into the killzone.
         java.util.List<Entity> ballsToRemove = new java.util.ArrayList<>();
+        // Manage ball's collision with wall behavior
         for (Entity currentBall : FXGL.getGameWorld().getEntitiesByType(EntityType.BALL)) {
             try {
                 if (currentBall.getBoolean("attachedToPaddle")) {
-                    // Nếu dính, di chuyển nó theo paddle
-                    currentBall.setX(paddle.getX() + paddle.getWidth() / 2.0 - Ball.BALL_SIZE / 2.0 + 12);
-                    currentBall.setY(paddle.getY() - 30);
-                } else {
-                    Point2D velocity = currentBall.getObject("velocity");
-                    currentBall.translate(velocity);
-                    if (currentBall.getX() <= 0) {
-                        currentBall.setX(0);
-                        currentBall.setProperty("velocity", new Point2D(-velocity.getX(), velocity.getY()));
-                        FXGL.play("wallhit.wav");
-                        getGameScene().getViewport().shakeTranslational(4.5);
-                    }
-                    if (currentBall.getRightX() >= getAppWidth()) {
-                        currentBall.setX(getAppWidth() - Ball.BALL_SIZE); // Đảm bảo dùng Ball.BALL_SIZE
-                        currentBall.setProperty("velocity", new Point2D(-velocity.getX(), velocity.getY()));
-                        FXGL.play("wallhit.wav");
-                        getGameScene().getViewport().shakeTranslational(4.5);
-                    }
 
-                    if (currentBall.getY() <= 0) {
-                        currentBall.setY(0);
-                        currentBall.setProperty("velocity", new Point2D(velocity.getX(), -velocity.getY()));
-                        FXGL.play("wallhit.wav");
-                        getGameScene().getViewport().shakeTranslational(4.5);
-                    }
-                    if (currentBall.getBottomY() > getAppHeight()) {
-                        ballsToRemove.add(currentBall);
-                    }
+                    // Nếu dính, di chuyển nó theo paddle
+                    currentBall.setX(paddle.getX() + paddle.getWidth() / 2.0 - Ball.BALL_SIZE / 2.0);
+                    currentBall.setY(paddle.getY() - 30);
+
+                } else {
+                    // Wall collision
+                    Point2D velocity = currentBall.getObject("velocity");
+                    PhysicsHandler.ball_wallCollision(currentBall, ballsToRemove, velocity);
+                    // Boss movement in hell level
                     bossBehaviour(velocity);
+
                 }
-            } catch (Exception ex) {
-                System.err.println("Exception bất ngờ trong onUpdate: " + ex);
+                } catch (Exception ex){
+                System.err.println("Exception catched in onUpdate: " + ex);
                 ex.printStackTrace();
             }
         }
 
+        if (getGameWorld().getEntitiesByType(EntityType.BRICK).isEmpty() && !LevelSelector.inSelection
+                && getGameWorld().getEntitiesByType(EntityType.HELL_BOSS).isEmpty()) {
+            GameWinManager.onGameWin();
+        }
+
+        // No more brick = Win the game
         if (getGameWorld().getEntitiesByType(EntityType.BRICK).isEmpty() && !LevelSelector.inSelection) {
             GameWinManager.onGameWin();
         }
 
+        // When ball falls into the killzone
         if (!ballsToRemove.isEmpty()) {
             for (Entity ballToRemove : ballsToRemove) {
                 ballToRemove.removeFromWorld();
@@ -290,18 +293,13 @@ public class GameManager extends GameApplication {
 
             if (FXGL.getGameWorld().getEntitiesByType(EntityType.BALL).isEmpty()) {
 
-                var hpProp = getWorldProperties().intProperty("currentHP");
+                hpProp = getWorldProperties().intProperty("currentHP");
                 int currentHP = Math.max(0, hpProp.get() - 1);
                 hpProp.set(currentHP);
 
                 System.out.println("Ball out! Hp còn : " + currentHP);
 
-                if (currentHP <= 0) {
-                    System.out.println("Setting gameIsOver = true");
-                    GameOverManager.onGameOver();
-                } else {
-                    resetBall();
-                }
+                resetBall();
             }
         }
     }
@@ -336,55 +334,35 @@ public class GameManager extends GameApplication {
                 AnimationComponent anim = boss1.getComponent(AnimationComponent.class);
                 if (FXGL.getGameTimer().getNow() - boss1.getDouble("gothitstart") > 0.4) {
                     int dropChance = rand.nextInt(100);
-                    if (dropChance < 50) {
+                    if (dropChance < 10) {
                         // 20% rơi Heal Item
                         spawn("heal_item", boss1.getX() + 10, boss1.getY() + 110);
-                    } else if (dropChance < 100) {
+                    } else if (dropChance < 20) {
                         // 20% rơi Expand Item
                         spawn("expand_item", boss1.getX() + 43, boss1.getY() + 110);
+                    } else if (dropChance < 30) {
+                        spawn("ball_item", boss1.getX() + 43, boss1.getY() + 110);
+                    } else if (dropChance < 40) {
+                        spawn("paddlespeed_item", boss1.getX() + 43, boss1.getY() + 110);
+                    } else if (dropChance < 50) {
+                        spawn("ballspeed_item",  boss1.getX() + 43, boss1.getY() + 110);
                     }
-                    Entity fireball = spawn("fireball", boss1.getX() + 43, boss1.getY() + 110);
-                    if (paddle.getX() < boss1.getX()) fireball.setProperty("velocity", new Point2D(-getBallSpeed(), getBallSpeed()));
-                    else fireball.setProperty("velocity", new Point2D(getBallSpeed(), getBallSpeed()));
-                    boss1.setProperty("gothit", false);
-                    anim.playIdle();
-                    continue;
+                    if (rand.nextBoolean()) {
+                        Entity fireball = spawn("fireball", boss1.getX() + 43, boss1.getY() + 110);
+                        if (paddle.getX() < boss1.getX()) fireball.setProperty("velocity", new Point2D(-getBallSpeed() / 3, getBallSpeed() / 3));
+                        else fireball.setProperty("velocity", new Point2D(getBallSpeed() / 3, getBallSpeed() / 3));
+                        boss1.setProperty("gothit", false);
+                        anim.playIdle();
+                        continue;
+                    }
                 }
                 anim.playRun();
             }
         }
         for (Entity fball : getGameWorld().getEntitiesByType(EntityType.FIRE_BALL)) {
             Point2D fvelocity = fball.getObject("velocity");
-
             fball.translate(fvelocity);
-
-            if (fball.getX() <= 0) {
-                fball.setX(0);
-                fball.setProperty("velocity", new Point2D(-fvelocity.getX(), fvelocity.getY()));
-                FXGL.play("wallhit.wav");
-                getGameScene().getViewport().shakeTranslational(3.5);
-            }
-
-            if (fball.getRightX() >= getAppWidth()) {
-                fball.setX(getAppWidth() - fball.getWidth());
-                fball.setProperty("velocity", new Point2D(-fvelocity.getX(), fvelocity.getY()));
-                FXGL.play("wallhit.wav");
-                getGameScene().getViewport().shakeTranslational(3.5);
-            }
-
-            if (fball.getY() <= 0) {
-                fball.setY(0);
-                fball.setProperty("velocity", new Point2D(fvelocity.getX(), -fvelocity.getY()));
-                FXGL.play("wallhit.wav");
-                getGameScene().getViewport().shakeTranslational(4.5);
-            }
-
-            if (fball.getBottomY() > getAppHeight()) {
-                fball.setY(getAppHeight() - fball.getHeight());
-                fball.setProperty("velocity", new Point2D(fvelocity.getX(), -fvelocity.getY()));
-                FXGL.play("wallhit.wav");
-                getGameScene().getViewport().shakeTranslational(4.5);
-            }
+            PhysicsHandler.ball_wallCollision(fball, fvelocity);
         }
     }
 

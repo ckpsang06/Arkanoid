@@ -20,7 +20,6 @@ public class AnimationComponent extends Component {
     private State state = State.IDLE;
     private int facing = 1;
 
-    //anime_girl is default texture
     public AnimationComponent() {
         Image image = getAssetLoader().loadImage("111.png");
 
@@ -55,7 +54,9 @@ public class AnimationComponent extends Component {
         texture.loopAnimationChannel(animIdle);
     }
 
-    /** Gọi khi entity bắt đầu chạy */
+    /**
+     * Gọi khi entity bắt đầu chạy
+     * */
     public void playRun() {
         if (state != State.RUN) {
             texture.loopAnimationChannel(animRun);
@@ -63,7 +64,9 @@ public class AnimationComponent extends Component {
         }
     }
 
-    /** Gọi khi entity dừng lại */
+    /**
+     * Gọi khi entity dừng lại
+     * */
     public void playIdle() {
         if (state != State.IDLE) {
             texture.loopAnimationChannel(animIdle);
@@ -71,7 +74,9 @@ public class AnimationComponent extends Component {
         }
     }
 
-    /** Gọi khi entity tấn công */
+    /**
+     * Gọi khi entity tấn công
+     * */
     public void playAttack(double attack_duration) {
         if (state != State.ATTACK) {
             texture.playAnimationChannel(animAttack);
@@ -90,7 +95,9 @@ public class AnimationComponent extends Component {
         texture.setScaleX(-1);
     }
 
-    /** Dừng animation hẳn */
+    /**
+     * Dừng animation hẳn
+     * */
     public void stop() {
         texture.stop();
     }

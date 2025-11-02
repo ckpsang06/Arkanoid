@@ -20,8 +20,9 @@ import static org.arkanoid.GameManager.*;
 
 public class GameWinManager {
     public static void onGameWin() {
-        System.out.println("Game Over!");
+        System.out.println("Game Won!");
         LevelSelector.inSelection = true;
+        FXGL.play("win.wav");
         showgameWin();
     }
 

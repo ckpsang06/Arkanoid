@@ -1,6 +1,8 @@
 package org.arkanoid.level;
 
+import com.almasb.fxgl.dsl.FXGL;
 import org.arkanoid.GameManager;
+import org.arkanoid.entity.Brick;
 import org.arkanoid.utility.GameState;
 import org.arkanoid.utility.MusicHandler;
 
@@ -19,6 +21,7 @@ public class LevelManager {
     public static void startLevel(int levelId) {
         GameState.reset();
         LevelBuilder.clearWorld();
+
         LevelSelector.inSelection = false;
 
         switch (levelId) {
@@ -40,11 +43,19 @@ public class LevelManager {
                 MusicHandler.playForestMusic();
                 break;
             default:
-                LevelBuilder.buildLine("hellBackground", 15, 200, 10, 55, "orange_brick");
-                LevelBuilder.buildLine("orange_brick", 5, 100, true);
-                LevelBuilder.buildLine("orange_brick", 10, 150, true);
+                LevelBuilder.setBackground("hellBackground");
+                LevelBuilder.buildColumn("orange_brick", 5, 40, 200);
+                LevelBuilder.buildColumn("orange_brick", 5,
+                        FXGL.getAppWidth() - Brick.getBrickSize() - 60, 200);
+
+                LevelBuilder.buildColumn("orange_brick", 3, 120, 260);
+                LevelBuilder.buildColumn("orange_brick", 3,
+                        FXGL.getAppWidth() - Brick.getBrickSize() - 140, 260);
+
+                LevelBuilder.buildLine(10, 300, 200, 60, "orange_brick");
+
+                LevelBuilder.spawnBoss(600, 50);
                 MusicHandler.playHellMusic();
-//                LevelBuilder.spawnBoss(600, 220);
                 break;
         }
 

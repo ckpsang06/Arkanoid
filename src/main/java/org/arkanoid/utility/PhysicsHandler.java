@@ -8,16 +8,20 @@ import javafx.geometry.Point2D;
 import javafx.scene.text.Font;
 import org.arkanoid.GameManager;
 import org.arkanoid.component.HPComponent;
+import org.arkanoid.entity.Ball;
 import org.arkanoid.entity.EntityType;
 import com.almasb.fxgl.entity.Entity;
+
+import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
+import static com.almasb.fxgl.dsl.FXGLForKtKt.*;
 import static org.arkanoid.entity.Paddle.getPaddleSpeed;
 
 import org.arkanoid.entity.PowerUpPickup;
 
+import java.util.List;
 import java.util.Random;
 
 import static com.almasb.fxgl.dsl.FXGL.spawn;
-import static com.almasb.fxgl.dsl.FXGLForKtKt.onCollisionBegin;
 import static org.arkanoid.entity.Ball.getBallSpeed;
 import static org.arkanoid.entity.Paddle.setPaddleSpeed;
 
@@ -31,6 +35,63 @@ public class PhysicsHandler {
     private static javafx.animation.Timeline paddleSpeedTimer;
 
     static Random rand = new Random();
+
+    public static void ball_wallCollision(Entity currentBall, List<Entity> ballsToRemove, Point2D velocity) {
+        currentBall.translate(velocity);
+        if (currentBall.getX() <= 0) {
+            currentBall.setX(0);
+            currentBall.setProperty("velocity", new Point2D(-velocity.getX(), velocity.getY()));
+            FXGL.play("wallhit.wav");
+            getGameScene().getViewport().shakeTranslational(4.5);
+        }
+        if (currentBall.getRightX() >= getAppWidth()) {
+            currentBall.setX(getAppWidth() - Ball.BALL_SIZE); // Đảm bảo dùng Ball.BALL_SIZE
+            currentBall.setProperty("velocity", new Point2D(-velocity.getX(), velocity.getY()));
+            FXGL.play("wallhit.wav");
+            getGameScene().getViewport().shakeTranslational(4.5);
+        }
+
+        if (currentBall.getY() <= 0) {
+            currentBall.setY(0);
+            currentBall.setProperty("velocity", new Point2D(velocity.getX(), -velocity.getY()));
+            FXGL.play("wallhit.wav");
+            getGameScene().getViewport().shakeTranslational(4.5);
+        }
+
+        if (currentBall.getBottomY() > getAppHeight()) {
+            ballsToRemove.add(currentBall);
+        }
+    }
+
+    public static void ball_wallCollision(Entity fball, Point2D fvelocity) {
+        if (fball.getX() <= 0) {
+            fball.setX(0);
+            fball.setProperty("velocity", new Point2D(-fvelocity.getX(), fvelocity.getY()));
+            FXGL.play("wallhit.wav");
+            getGameScene().getViewport().shakeTranslational(3.5);
+        }
+
+        if (fball.getRightX() >= getAppWidth()) {
+            fball.setX(getAppWidth() - fball.getWidth());
+            fball.setProperty("velocity", new Point2D(-fvelocity.getX(), fvelocity.getY()));
+            FXGL.play("wallhit.wav");
+            getGameScene().getViewport().shakeTranslational(3.5);
+        }
+
+        if (fball.getY() <= 0) {
+            fball.setY(0);
+            fball.setProperty("velocity", new Point2D(fvelocity.getX(), -fvelocity.getY()));
+            FXGL.play("wallhit.wav");
+            getGameScene().getViewport().shakeTranslational(4.5);
+        }
+
+        if (fball.getBottomY() > getAppHeight()) {
+            fball.setY(getAppHeight() - fball.getHeight());
+            fball.setProperty("velocity", new Point2D(fvelocity.getX(), -fvelocity.getY()));
+            FXGL.play("wallhit.wav");
+            getGameScene().getViewport().shakeTranslational(4.5);
+        }
+    }
 
     public static void ball_brickCollision() {
         onCollisionBegin(EntityType.BALL, EntityType.BRICK, (ball, brick) -> {
@@ -46,14 +107,14 @@ public class PhysicsHandler {
                 int dropChance = rand.nextInt(100); // random 0 - 99
 
                 if (dropChance < 10) {
-                    spawn("heal_item", brick.getX(), brick.getY());
+                    spawn("ballspeed_item", brick.getX(), brick.getY());
                 } else if (dropChance < 20) {
                     spawn("expand_item", brick.getX(), brick.getY());
-                } else if (dropChance < 60) {
+                } else if (dropChance < 30) {
                     spawn("ball_item", brick.getX(), brick.getY());
-                } else if (dropChance < 70) {
-                    spawn("ballspeed_item", brick.getX(), brick.getY());
-                } else if (dropChance < 80) {
+                } else if (dropChance < 40) {
+                    spawn("heal_item", brick.getX(), brick.getY());
+                } else if (dropChance < 50) {
                     spawn("paddlespeed_item", brick.getX(), brick.getY());
                 }
             }
@@ -162,55 +223,41 @@ public class PhysicsHandler {
         onCollisionBegin(EntityType.PADDLE, EntityType.BALL_ITEM, (paddle, ball_item) -> {
             FXGL.play("power_up.wav");
 
-            // Lấy vị trí quả bóng GỐC (nếu có)
+            // Get the position of the original ball
             Entity existingBall = FXGL.getGameWorld().getEntitiesByType(EntityType.BALL).get(0);
             Point2D originalVelocity = new Point2D(0, -getBallSpeed());
             Point2D ballPosition = new Point2D(paddle.getX() + paddle.getWidth() / 2, paddle.getY() - 30);
 
             if (existingBall != null) {
                 originalVelocity = existingBall.getObject("velocity");
-                ballPosition = existingBall.getPosition(); // Tạo bóng mới tại vị trí bóng cũ
+                ballPosition = existingBall.getPosition(); // Create a new ball at paddle's position
             }
 
-            // Tạo bóng mới tại vị trí bóng cũ (hoặc trên paddle)
+            // Create a new ball at paddle's position / above paddle
             Entity newBall = spawn("ball", ballPosition.getX(), ballPosition.getY());
-
-            // --- 🌟 SỬA LỖI VÀ XỬ LÝ TRƯỜNG HỢP 180 ĐỘ 🌟 ---
 
             double originalVx = originalVelocity.getX();
             double originalVy = originalVelocity.getY();
-
             double newVy = -Math.abs(originalVy);
 
             if (Math.abs(newVy) < 0.1) {
                 newVy = -getBallSpeed();
             }
-
             double newVx = -originalVx;
 
             if (Math.abs(originalVx) < 0.1) {
-
                 double splitSpeed = getBallSpeed() * 0.5; // Tốc độ tách ngang
-
                 if (existingBall != null) {
                     existingBall.setProperty("velocity", new Point2D(-splitSpeed, newVy));
                 }
-
                 newVx = splitSpeed;
-
             } else {
-
                 if (existingBall != null) {
                     existingBall.setProperty("velocity", new Point2D(originalVx, newVy));
                 }
             }
-
             newBall.setProperty("velocity", new Point2D(newVx, newVy));
             newBall.setProperty("attachedToPaddle", false);
-
-            // --- Hết phần sửa lỗi ---
-
-            // Xóa item khỏi thế giới
             ball_item.removeFromWorld();
             return null;
         });
@@ -246,7 +293,7 @@ public class PhysicsHandler {
         javafx.scene.text.Text countdownText = new javafx.scene.text.Text(String.valueOf((int) durationSeconds));
         countdownText.setFill(javafx.scene.paint.Color.WHITE);
         countdownText.setStroke(javafx.scene.paint.Color.BLACK);
-        countdownText.setFont(javafx.scene.text.Font.font("Arial", javafx.scene.text.FontWeight.BOLD, 30));
+        countdownText.setFont(pixelmixFont);
         countdownText.setTranslateX(icon.getTranslateX() + 60);
         countdownText.setTranslateY(icon.getTranslateY() + 35);
 
@@ -281,26 +328,22 @@ public class PhysicsHandler {
     public static void paddle_ballSpeedItemCollision() {
         onCollisionBegin(EntityType.PADDLE, EntityType.BALLSPEED_ITEM, (paddle, item) -> {
             FXGL.play("power_up.wav");
-
-            // Nếu đang có hiệu ứng: reset lại thời gian đếm
             if (ballSpeedActive) {
                 if (ballSpeedTimer != null) {
                     ballSpeedTimer.stop();
                     ballSpeedTimer.playFromStart();
                 }
-
                 showPowerUpIcon("ballspeed_item", 8);
-
                 item.removeFromWorld();
                 return null;
             }
 
             // Hiệu ứng bắt đầu
             ballSpeedActive = true;
-            ballSpeedMultiplier = 1.25;
+            ballSpeedMultiplier = 1.05;
             showPowerUpIcon("ballspeed_item", 8);
 
-            // Tăng tốc tất cả bóng hiện có
+            // Speed-up
             FXGL.getGameWorld().getEntitiesByType(EntityType.BALL).forEach(ball -> {
                 Point2D v = ball.getObject("velocity");
                 ball.setProperty("velocity", v.multiply(ballSpeedMultiplier));
@@ -308,14 +351,14 @@ public class PhysicsHandler {
 
             item.removeFromWorld();
 
-            // Sau 8 giây, reset tốc độ về ban đầu
+            // Revert back after 8 seconds
             ballSpeedTimer = new javafx.animation.Timeline(
                     new javafx.animation.KeyFrame(javafx.util.Duration.seconds(8), e -> {
                         ballSpeedActive = false;
 
                         FXGL.getGameWorld().getEntitiesByType(EntityType.BALL).forEach(ball -> {
                             Point2D v = ball.getObject("velocity");
-                            // Nhân với nghịch đảo để khôi phục đúng tốc độ
+                            // Multiply with inverse to get original speed
                             ball.setProperty("velocity", v.multiply(1 / ballSpeedMultiplier));
                         });
 
@@ -332,31 +375,23 @@ public class PhysicsHandler {
         onCollisionBegin(EntityType.PADDLE, EntityType.PADDLESPEED_ITEM, (paddle, item) -> {
             FXGL.play("power_up.wav");
 
-            // Nếu đang có hiệu ứng paddle speed → reset thời gian và countdown
+            // If currently having the powerup, reset timer and duration.
             if (paddleSpeedActive) {
                 if (paddleSpeedTimer != null) {
                     paddleSpeedTimer.stop();
                     paddleSpeedTimer.playFromStart();
                 }
-
-                // Làm mới lại countdown UI
                 showPowerUpIcon("paddlespeed_item", 8);
-
                 item.removeFromWorld();
                 return null;
             }
-
-            // Bắt đầu hiệu ứng
             paddleSpeedActive = true;
             showPowerUpIcon("paddlespeed_item", 8);
 
             double oldSpeed = getPaddleSpeed();
-            double boostedSpeed = oldSpeed * 1.5;
+            double boostedSpeed = oldSpeed * 1.2;
             setPaddleSpeed(boostedSpeed);
-
             item.removeFromWorld();
-
-            // Sau 8 giây → trả về tốc độ cũ
             paddleSpeedTimer = new javafx.animation.Timeline(
                     new javafx.animation.KeyFrame(javafx.util.Duration.seconds(8), e -> {
                         setPaddleSpeed(oldSpeed);
@@ -371,7 +406,7 @@ public class PhysicsHandler {
 
     public static void fireball_paddleCollision() {
         onCollisionBegin(EntityType.FIRE_BALL, EntityType.PADDLE, (ball, paddle) -> {
-            FXGL.play("paddle_land.wav");
+            FXGL.play("killzone.wav");
             FXGL.inc("currentHP", -1);
             ball.removeFromWorld();
             return null;

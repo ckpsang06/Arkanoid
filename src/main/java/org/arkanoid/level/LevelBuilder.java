@@ -34,6 +34,7 @@ public class LevelBuilder {
         spawn("boss1", X, Y);
     }
 
+    // buildLine with columns option
     public static void buildLevel(String bg, int rows, int cols, double startY, double startX) {
         setBackground(bg);
         double brickW = getBrickSize();
@@ -45,6 +46,7 @@ public class LevelBuilder {
         }
     }
 
+    // Several buildLine options
     public static void buildLine(String bg, int count, double y, double startX) {
         setBackground(bg);
         double brickW = getBrickSize();
@@ -56,6 +58,14 @@ public class LevelBuilder {
 
     public static void buildLine(String bg, int count, double y, double startX, double _spacing, String brick) {
         setBackground(bg);
+        double brickW = getBrickSize();
+        double spacing = _spacing;
+        for (int i = 0; i < count; i++) {
+            spawn(brick, startX + i * (brickW + spacing), y);
+        }
+    }
+
+    public static void buildLine(int count, double y, double startX, double _spacing, String brick) {
         double brickW = getBrickSize();
         double spacing = _spacing;
         for (int i = 0; i < count; i++) {
@@ -78,12 +88,21 @@ public class LevelBuilder {
         }
     }
 
+    public static void buildColumn(String brickName, int brickCount, double startingX, double startingY) {
+        double spacing = getBrickSize() * 2.5;
+        for (int i = 0; i < brickCount; i++) {
+            spawn(brickName, startingX, startingY + i * spacing);
+        }
+    }
+
+    /**
+     * Spawns paddle and ball
+     * */
     public static void spawnCoreEntities() {
         GameManager.paddle = spawn("paddle", getAppWidth() / 2.0 - 60, getAppHeight() - 120);
         Entity newBall = spawn("ball", getAppWidth() / 2.0, getAppHeight() / 2.0);
         newBall.setProperty("velocity", Point2D.ZERO);
         newBall.setProperty("attachedToPaddle", true);
-
     }
 
     public static void startTutorial(boolean showOverlay) {
@@ -104,7 +123,6 @@ public class LevelBuilder {
                 ballToLaunch.setProperty("velocity", new Point2D(BALL_SPEED, BALL_SPEED));
                 ballToLaunch.setProperty("attachedToPaddle", false); // Dùng logic mới
             }
-
             isPaused = false;
         }
     }

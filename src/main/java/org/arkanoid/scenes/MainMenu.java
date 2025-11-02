@@ -36,10 +36,6 @@ public class MainMenu extends FXGLMenu {
         super(type);
         MusicHandler.playMenuMusic();
 
-        // Title
-//        Text title = new Text("Arkanoid");
-//        title.setFont(Font.font("Arial", FontWeight.BOLD, 108));
-//        title.setFill(Color.RED);
         Image title = image("arkanoid_title.png");
         ImageView titleView = new ImageView(title);
         titleView.setFitWidth(600);
@@ -69,21 +65,21 @@ public class MainMenu extends FXGLMenu {
             fireNewGame();
         });
 
-        Button btnOptions = FXGL.getUIFactoryService().newButton("Options");
-        btnOptions.setOnAction(e -> {
-            showOptionsMenu();
-        });
+//        Button btnOptions = FXGL.getUIFactoryService().newButton("Options");
+//        btnOptions.setOnAction(e -> {
+//            showOptionsMenu();
+//        });
 
         Button btnCredits = FXGL.getUIFactoryService().newButton("Credits");
 
         Button btnExit = FXGL.getUIFactoryService().newButton("Exit");
         btnExit.setOnAction(e -> fireExit());
 
-        VBox buttonBox = new VBox(20, btnStart, btnOptions, btnCredits, btnExit);
+        VBox buttonBox = new VBox(20, btnStart, btnCredits, btnExit);
         buttonBox.setAlignment(Pos.CENTER);
 
         StackPane bottomPane = new StackPane(buttonBox);
-        bottomPane.setPadding(new Insets(0, 0, 60, 0));
+        bottomPane.setPadding(new Insets(0, 0, 100, 0));
         bottomPane.setAlignment(Pos.BOTTOM_CENTER);
 
         // Layout
@@ -132,6 +128,5 @@ public class MainMenu extends FXGLMenu {
 
         getContentRoot().getChildren().add(optionsBox);
     }
-
 
 }
