@@ -1,6 +1,8 @@
 package org.arkanoid.entity;
 
-public class Ball extends MovableObject {
+import com.almasb.fxgl.entity.Entity;
+
+public class Ball extends Entity {
     public static int BALL_SPEED = 3;
     public static final int BALL_SIZE = 15;
 

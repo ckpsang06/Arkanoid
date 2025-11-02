@@ -1,6 +1,8 @@
 package org.arkanoid.entity;
 
-public class Paddle extends MovableObject {
+import com.almasb.fxgl.entity.Entity;
+
+public class Paddle extends Entity {
 
     private static final int PADDLE_WIDTH = 100;
     private static final int PADDLE_HEIGHT = 25;

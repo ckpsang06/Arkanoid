@@ -1,6 +1,8 @@
 package org.arkanoid.entity;
 
-public class PowerUpPickup extends MovableObject {
+import com.almasb.fxgl.entity.Entity;
+
+public class PowerUpPickup extends Entity {
     private static final int powerUpSize = 20;
     private static final int powerUpSpeed = 2;
     private static final int healItemValue = 1;

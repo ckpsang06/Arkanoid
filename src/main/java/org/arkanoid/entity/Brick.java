@@ -1,6 +1,8 @@
 package org.arkanoid.entity;
 
-public class Brick extends GameObject {
+import com.almasb.fxgl.entity.Entity;
+
+public class Brick extends Entity {
     private static int BRICK_SIZE = 30;
     private static int BRICK_WIDTH = 60;
 

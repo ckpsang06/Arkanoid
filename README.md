@@ -1,23 +1,32 @@
 # Arkanoid
 
-Công việc thành viên:
+= [Video mô tả game](https://youtu.be/GSyWL5Tgyk8)
+
+= Sơ đồ về files của game:
+
+![img.png](img.png)
+
+= Công việc thành viên:
 - Nguyễn Hải An:
-  + Created the initial framework.
-  + Conflict fixer and merger.
-  + Finished up main menu and wrote pause menu.
-  + Bugfixer 1 (Levels, musics, etc.)
-  + Creative director: sprites, SFXs and musics.
+  + Created the initial framework (entities, factories, scenes, music handling,...).
+  + Main merger, conflict resolver and refactorer.
+  + Refined MainMenu, PauseMenu and LevelBuilder.
+  + Created the game's diagram and video showcase.
+  + Creative director for game idea, sprites, SFXs and musics.
   + Wrote handlers for physics and musics.
+  + Designed some levels.
+  + Bug-fixing.
 - Cao Khắc Phan Sang:
-  + Created level selector.
-  + Created main menu.
-  + Created game over menu.
+  + Created levels' main features: selector, manager, builder,...
+  + Created the guide overlay in tutorial.
+  + Created the base framework for MainMenu and GameOverManager.
 - Nguyễn Đức Khiêm:
-  + Bugfixer 2 (Levels, musics, etc.)
-  + Additional component writer for bricks.
-  + Backgrounds finder.
-  + Collision writer.
+  + Created components (animation and HP components).
+  + Created the boss for the final level.
+  + Found the game's backgrounds.
+  + Wrote collision handling.
+  + Bug-fixing.
 - Bùi Hoàng Tùng:
-  + Created power-up for paddle and ball, including but not limited to: faster velocity, paddle's increased size, additional HP,...);
-  + Game variables' UIs writer, like: HP, current points and power-ups, ...
-  + Level Designing.
+  + Created power-ups for paddle and balls.
+  + Wrote game variables and their UIs.
+  + Designed some levels.
