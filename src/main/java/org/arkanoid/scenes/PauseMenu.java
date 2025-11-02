@@ -9,6 +9,9 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
+import org.arkanoid.GameManager;
+import org.arkanoid.level.LevelManager;
+import org.arkanoid.level.LevelSelector;
 import org.arkanoid.utility.MusicHandler;
 
 import static com.almasb.fxgl.dsl.FXGL.getAppWidth;
@@ -49,6 +52,7 @@ public class PauseMenu extends FXGLMenu {
         mainMenuBtn.setOnAction(e -> {
             MusicHandler.playMenuMusic();
             FXGL.getGameController().gotoMainMenu();
+            LevelSelector.inSelection = true;
         });
 
         box.getChildren().addAll(resumeBtn, mainMenuBtn);

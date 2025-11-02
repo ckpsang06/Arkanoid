@@ -9,6 +9,7 @@ import static com.almasb.fxgl.dsl.FXGLForKtKt.getAppHeight;
 import static com.almasb.fxgl.dsl.FXGLForKtKt.getAppWidth;
 
 public class LevelSelector {
+    public static boolean inSelection = true;
     private static StackPane levelSelectPane;
 
     public static void showLevelSelect() {

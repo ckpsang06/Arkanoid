@@ -2,12 +2,15 @@ package org.arkanoid.utility;
 
 import com.almasb.fxgl.audio.Music;
 import com.almasb.fxgl.dsl.FXGL;
+import com.almasb.fxgl.logging.FileOutput;
 
 public class MusicHandler {
 
     private static Music tutorialTheme;
     private static Music mainMenuTheme;
+    private static Music forestTheme;
     private static Music spaceTheme;
+    private static Music hellTheme;
     private static Music currentMusic;
 
     public static void playLevelMusic() {
@@ -29,6 +32,24 @@ public class MusicHandler {
         System.out.println("Menu Music Played");
     }
 
+    public static void playForestMusic() {
+        ensureLoaded();
+        stopAllKnownMusic();
+
+        currentMusic = forestTheme;
+        FXGL.getAudioPlayer().loopMusic(currentMusic);
+        System.out.println("Forest Music Played");
+    }
+
+    public static void playHellMusic() {
+        ensureLoaded();
+        stopAllKnownMusic();
+
+        currentMusic = hellTheme;
+        FXGL.getAudioPlayer().loopMusic(currentMusic);
+        System.out.println("Hell Music Played");
+    }
+
     public static void playSpaceMusic() {
         ensureLoaded();
         stopAllKnownMusic();
@@ -43,8 +64,13 @@ public class MusicHandler {
             tutorialTheme = FXGL.getAssetLoader().loadMusic("tutorial_theme.mp3");
         if (mainMenuTheme == null)
             mainMenuTheme = FXGL.getAssetLoader().loadMusic("menu_theme.mp3");
+        if (forestTheme == null)
+            forestTheme = FXGL.getAssetLoader().loadMusic("forest_theme.mp3");
         if (spaceTheme == null)
             spaceTheme = FXGL.getAssetLoader().loadMusic("space_theme.mp3");
+        if (hellTheme == null) {
+            hellTheme = FXGL.getAssetLoader().loadMusic("hell_theme.mp3");
+        }
     }
 
     private static void stopAllKnownMusic() {

@@ -5,6 +5,7 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import org.arkanoid.GameManager;
+import org.arkanoid.utility.MusicHandler;
 
 import java.util.List;
 
@@ -35,6 +36,7 @@ public class LevelUIFactory {
         backBtn.setOnAction(e -> {
             FXGL.getGameScene().removeUINode(vbox.getParent());
             FXGL.getGameController().gotoMainMenu();
+            MusicHandler.playMenuMusic();
         });
         vbox.getChildren().add(backBtn);
 
