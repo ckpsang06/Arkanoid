@@ -102,7 +102,7 @@ public class GameManager extends GameApplication {
         settings.setWidth(1280);
         settings.setHeight(720);
         settings.setTitle("Arkanoid");
-        settings.setVersion("0.1");
+        settings.setVersion("1.0");
         settings.setMainMenuEnabled(true);
     }
 
@@ -231,13 +231,11 @@ public class GameManager extends GameApplication {
         // Update timer
         double elapsed = FXGL.getd("elapsedTime");
         FXGL.set("elapsedTime", elapsed + tpf);
-
         // Paddle's HP when falling below 0 will trigger gameOver
         var hpProp = getWorldProperties().intProperty("currentHP");
         if (hpProp.get() == 0) {
             GameOverManager.onGameOver();
         }
-
         // Power-up items position translation
         for (Entity e : FXGL.getGameWorld().getEntities()) {
             if (e.getType() == EntityType.HEAL_ITEM
@@ -248,64 +246,55 @@ public class GameManager extends GameApplication {
                 e.translateY(PowerUpPickup.getPowerUpSpeed());
             }
         }
-
         // Add balls that fall into the killzone.
         java.util.List<Entity> ballsToRemove = new java.util.ArrayList<>();
         // Manage ball's collision with wall behavior
         for (Entity currentBall : FXGL.getGameWorld().getEntitiesByType(EntityType.BALL)) {
             try {
                 if (currentBall.getBoolean("attachedToPaddle")) {
-
-                    // Nếu dính, di chuyển nó theo paddle
+                    // If the ball is still attached, it moves along with the paddle
                     currentBall.setX(paddle.getX() + paddle.getWidth() / 2.0 - Ball.BALL_SIZE / 2.0);
                     currentBall.setY(paddle.getY() - 30);
-
                 } else {
                     // Wall collision
                     Point2D velocity = currentBall.getObject("velocity");
                     PhysicsHandler.ball_wallCollision(currentBall, ballsToRemove, velocity);
                     // Boss movement in hell level
                     bossBehaviour(velocity);
-
                 }
                 } catch (Exception ex){
                 System.err.println("Exception catched in onUpdate: " + ex);
                 ex.printStackTrace();
             }
         }
-
         if (getGameWorld().getEntitiesByType(EntityType.BRICK).isEmpty() && !LevelSelector.inSelection
                 && getGameWorld().getEntitiesByType(EntityType.HELL_BOSS).isEmpty()) {
             GameWinManager.onGameWin();
         }
-
         // No more brick = Win the game
         if (getGameWorld().getEntitiesByType(EntityType.BRICK).isEmpty() && !LevelSelector.inSelection) {
             GameWinManager.onGameWin();
         }
-
         // When ball falls into the killzone
         if (!ballsToRemove.isEmpty()) {
             for (Entity ballToRemove : ballsToRemove) {
                 ballToRemove.removeFromWorld();
             }
-
             getGameScene().getViewport().shakeTranslational(9.5);
             FXGL.play("killzone.wav");
-
             if (FXGL.getGameWorld().getEntitiesByType(EntityType.BALL).isEmpty()) {
-
                 hpProp = getWorldProperties().intProperty("currentHP");
                 int currentHP = Math.max(0, hpProp.get() - 1);
                 hpProp.set(currentHP);
-
                 System.out.println("Ball out! Hp còn : " + currentHP);
-
                 resetBall();
             }
         }
     }
 
+    /**
+     * Real-time boss and its fireballs' behavior
+     * */
     private void bossBehaviour(Point2D velocity) {
         Random rand = new Random();
         for (Entity boss1 : FXGL.getGameWorld().getEntitiesByType(EntityType.HELL_BOSS)) {
@@ -320,7 +309,6 @@ public class GameManager extends GameApplication {
                     continue;
                 }
             }
-
             if (velocity.getX() < 0) {
                 if (boss1.getX() <= getAppWidth() - 90) {
                     boss1.translateX(2);
@@ -331,7 +319,6 @@ public class GameManager extends GameApplication {
                     boss1.translateX(-2);
                 }
             }
-
             if (boss1.getBoolean("gothit")) {
                 AnimationComponent anim = boss1.getComponent(AnimationComponent.class);
                 if (FXGL.getGameTimer().getNow() - boss1.getDouble("gothitstart") > 0.4) {

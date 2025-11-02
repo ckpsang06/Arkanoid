@@ -46,24 +46,6 @@ public class LevelBuilder {
     }
 
     // Several buildLine options
-    public static void buildLine(String bg, int count, double y, double startX) {
-        setBackground(bg);
-        double brickW = getBrickSize();
-        double spacing = getBrickSize() + 5;
-        for (int i = 0; i < count; i++) {
-            spawn("brick", startX + i * (brickW + spacing), y);
-        }
-    }
-
-    public static void buildLine(String bg, int count, double y, double startX, double _spacing, String brick) {
-        setBackground(bg);
-        double brickW = getBrickSize();
-        double spacing = _spacing;
-        for (int i = 0; i < count; i++) {
-            spawn(brick, startX + i * (brickW + spacing), y);
-        }
-    }
-
     public static void buildLine(int count, double y, double startX, double _spacing, String brick) {
         double brickW = getBrickSize();
         double spacing = _spacing;
@@ -104,6 +86,9 @@ public class LevelBuilder {
         newBall.setProperty("attachedToPaddle", true);
     }
 
+    /**
+     * Start the tutorial level and opens guide overlay.
+     * */
     public static void startTutorial(boolean showOverlay) {
         buildLevel("grassBackground", 2, 15, 100, 150);
         if (showOverlay) {

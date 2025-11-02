@@ -93,44 +93,66 @@ public class PhysicsHandler {
 
     public static void ball_brickCollision() {
         onCollisionBegin(EntityType.BALL, EntityType.BRICK, (ball, brick) -> {
-            // HP reduction for brick
+            // Damage brick
             HPComponent hp = brick.getComponent(HPComponent.class);
             hp.damage(1);
+
             if (hp.getHP() <= 0) {
                 brick.removeFromWorld();
                 FXGL.play("brick_break.wav");
-                int dropChance = rand.nextInt(100); // random 0 - 99
-
-                if (dropChance < 10) {
-                    spawn("ballspeed_item", brick.getX(), brick.getY());
-                } else if (dropChance < 20) {
-                    spawn("expand_item", brick.getX(), brick.getY());
-                } else if (dropChance < 30) {
-                    spawn("ball_item", brick.getX(), brick.getY());
-                } else if (dropChance < 40) {
-                    spawn("heal_item", brick.getX(), brick.getY());
-                } else if (dropChance < 50) {
-                    spawn("paddlespeed_item", brick.getX(), brick.getY());
-                }
+                DropItem(brick);
             }
-            // Scoring and Brick Hitting
+
+            // Score and sound
             FXGL.inc("score", 1);
             FXGL.play("land.wav");
 
+            // Reflect ball velocity based on collision normal
             Point2D velocity = ball.getObject("velocity");
-
-            // Hitting on the side.
-            if (ball.getRightX() < brick.getX() || ball.getX() > brick.getRightX()) {
-                ball.setProperty("velocity", new Point2D(-velocity.getX(), velocity.getY()));
-            }
-
-            // Hitting on top/bottom
-            if (ball.getBottomY() > brick.getY() || ball.getY() < brick.getBottomY()) {
-                ball.setProperty("velocity", new Point2D(velocity.getX(), -velocity.getY()));
-            }
+            Point2D normal = computeCollisionNormal(ball, brick);
+            Point2D reflected = velocity.subtract(normal.multiply(2 * velocity.dotProduct(normal)));
+            ball.setProperty("velocity", reflected);
 
             return null;
         });
+    }
+
+    /**
+     * Randomly spawns items upon ball-brick collision
+     * */
+    private static void DropItem(Entity brick) {
+        int dropChance = rand.nextInt(100);
+        double x = brick.getX();
+        double y = brick.getY();
+
+        if (dropChance < 10) spawn("ballspeed_item", x, y);
+        else if (dropChance < 20) spawn("expand_item", x, y);
+        else if (dropChance < 30) spawn("paddlespeed_item", x, y);
+        else if (dropChance < 40) spawn("heal_item", x, y);
+        else if (dropChance < 60) spawn("ball_item", x, y);
+    }
+
+    /**
+     * Calculate the collision normal - 'impulse' vector for the ball after collision,
+     * help preventing cases of ball going into bricks
+     * */
+    private static Point2D computeCollisionNormal(Entity ball, Entity brick) {
+        Point2D ballCenter = ball.getCenter();
+        Point2D brickCenter = brick.getCenter();
+
+        double dx = ballCenter.getX() - brickCenter.getX();
+        double dy = ballCenter.getY() - brickCenter.getY();
+
+        double absDX = Math.abs(dx);
+        double absDY = Math.abs(dy);
+        double halfWidth = brick.getWidth() / 2;
+        double halfHeight = brick.getHeight() / 2;
+
+        if (absDX / halfWidth > absDY / halfHeight) {
+            return new Point2D(Math.signum(dx), 0); // Horizontal collision
+        } else {
+            return new Point2D(0, Math.signum(dy)); // Vertical collision
+        }
     }
 
     public static void ball_paddleCollision() {
@@ -258,10 +280,16 @@ public class PhysicsHandler {
         });
     }
 
+    /**
+     * Load font from files
+     * */
     private static Font loadFont(String path, int size) {
         return Font.loadFont(PhysicsHandler.class.getResourceAsStream(path), size);
     }
 
+    /**
+     * Display power-ups the player currently has.
+     * */
     private static void showPowerUpIcon(String iconName, double durationSeconds) {
         var gameScene = FXGL.getGameScene();
         Font pixelmixFont = loadFont("/assets/ui/fonts/pixelmix.ttf", 30);
