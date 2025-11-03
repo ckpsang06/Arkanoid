@@ -4,7 +4,7 @@
 
 = Sơ đồ về files của game:
 
-![img.png](img.png)
+![img_1.png](img_1.png)
 
 = Công việc thành viên:
 - Nguyễn Hải An:
