@@ -11,7 +11,6 @@ import static com.almasb.fxgl.dsl.FXGL.getAssetLoader;
 
 public class AnimationComponent extends Component {
     private AnimatedTexture texture;
-
     private AnimationChannel animIdle;
     private AnimationChannel animRun;
     private AnimationChannel animAttack;
